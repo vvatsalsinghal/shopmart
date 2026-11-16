@@ -18,11 +18,11 @@
 | **Layer 1** | Semantic HTML5 for E-Commerce / B2B | 🔵 Practiced | 2026-11-16 | - |
 | **Layer 1** | CSS Flexbox & CSS Grid for Catalogues | 🔵 Practiced | 2026-11-16 | - |
 | **Layer 1** | Responsive Design & Mobile Breakpoints | 🔵 Practiced | 2026-11-16 | - |
-| **Layer 2** | Modern JS Variables (`const`, `let`) & Scope | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 2** | Arrow Functions & Return Semantics | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 2** | Array Methods (`map`, `filter`, `find`, `reduce`) | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 2** | Destructuring & Spread/Rest Operators | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 2** | ES Modules (`import` / `export`) | 🟡 Introduced | 2026-11-16 | - |
+| **Layer 2** | Modern JS Variables (`const`, `let`) & Scope | 🔵 Practiced | 2026-11-16 | - |
+| **Layer 2** | Arrow Functions & Return Semantics | 🔵 Practiced | 2026-11-16 | - |
+| **Layer 2** | Array Methods (`map`, `filter`, `find`, `reduce`) | 🔵 Practiced | 2026-11-16 | - |
+| **Layer 2** | Destructuring & Spread/Rest Operators | 🔵 Practiced | 2026-11-16 | - |
+| **Layer 2** | ES Modules (`import` / `export`) | 🔵 Practiced | 2026-11-16 | - |
 | **Layer 3** | Call Stack, Event Loop & Web APIs | ⚪ Pending | - | - |
 | **Layer 3** | Promises & `async/await` Patterns | ⚪ Pending | - | - |
 | **Layer 3** | Fetch API & HTTP Protocol Fundamentals | ⚪ Pending | - | - |
