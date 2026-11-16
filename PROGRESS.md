@@ -7,7 +7,7 @@
 
 ---
 
-## Current Active Layer: Layer 1 (Frontend Foundations: Semantic HTML & Modern CSS)
+## Current Active Layer: Layer 2 (Core JavaScript Fundamentals & Data Modeling)
 
 | Layer | Topic / Skill | Status | Date Started | Date Mastered |
 | :--- | :--- | :--- | :--- | :--- |
@@ -15,14 +15,14 @@
 | **Layer 0** | Git Initialization & `.gitignore` Rules | 🟢 Independent | 2026-11-16 | 2026-11-16 |
 | **Layer 0** | Node.js Runtime Verification (`node -v`) | 🟢 Independent | 2026-11-16 | 2026-11-16 |
 | **Layer 0** | npm & `package.json` Fundamentals | 🟢 Independent | 2026-11-16 | 2026-11-16 |
-| **Layer 1** | Semantic HTML5 for E-Commerce / B2B | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 1** | CSS Flexbox & CSS Grid for Catalogues | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 1** | Responsive Design & Mobile Breakpoints | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 2** | Modern JS Variables (`const`, `let`) & Scope | ⚪ Pending | - | - |
-| **Layer 2** | Arrow Functions & Return Semantics | ⚪ Pending | - | - |
-| **Layer 2** | Array Methods (`map`, `filter`, `find`, `reduce`) | ⚪ Pending | - | - |
-| **Layer 2** | Destructuring & Spread/Rest Operators | ⚪ Pending | - | - |
-| **Layer 2** | ES Modules (`import` / `export`) | ⚪ Pending | - | - |
+| **Layer 1** | Semantic HTML5 for E-Commerce / B2B | 🔵 Practiced | 2026-11-16 | - |
+| **Layer 1** | CSS Flexbox & CSS Grid for Catalogues | 🔵 Practiced | 2026-11-16 | - |
+| **Layer 1** | Responsive Design & Mobile Breakpoints | 🔵 Practiced | 2026-11-16 | - |
+| **Layer 2** | Modern JS Variables (`const`, `let`) & Scope | 🟡 Introduced | 2026-11-16 | - |
+| **Layer 2** | Arrow Functions & Return Semantics | 🟡 Introduced | 2026-11-16 | - |
+| **Layer 2** | Array Methods (`map`, `filter`, `find`, `reduce`) | 🟡 Introduced | 2026-11-16 | - |
+| **Layer 2** | Destructuring & Spread/Rest Operators | 🟡 Introduced | 2026-11-16 | - |
+| **Layer 2** | ES Modules (`import` / `export`) | 🟡 Introduced | 2026-11-16 | - |
 | **Layer 3** | Call Stack, Event Loop & Web APIs | ⚪ Pending | - | - |
 | **Layer 3** | Promises & `async/await` Patterns | ⚪ Pending | - | - |
 | **Layer 3** | Fetch API & HTTP Protocol Fundamentals | ⚪ Pending | - | - |

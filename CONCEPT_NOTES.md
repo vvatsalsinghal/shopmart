@@ -84,3 +84,46 @@ This living document contains detailed explanations, mental models, code snippet
    *Answer*: Use Flexbox for 1-dimensional layouts where items need to align in a single direction (row or column) with content-driven sizing (e.g., navbars, button groups, badge lists). Use CSS Grid for 2-dimensional layouts where items must align across both rows and columns simultaneously, or for responsive repeating layouts like product catalogues (`grid-template-columns: repeat(auto-fill, minmax(...))`).
 2. **Q: Why should you avoid using only `<div>` elements for building a user interface?**  
    *Answer*: Generic `<div>` tags provide no semantic meaning. Using semantic HTML5 elements (`<header>`, `<main>`, `<article>`, `<aside>`, `<nav>`) is critical for: (1) **Accessibility (a11y)**: screen readers can jump directly to landmark sections; (2) **SEO**: search engine web crawlers prioritize headers and articles; (3) **Maintainability**: other developers can immediately grasp component hierarchy.
+
+---
+
+## Layer 2: Core JavaScript Fundamentals & Data Modeling
+
+### 1. In-Memory Data Modeling (Array of Objects)
+- **Concept**: Data is represented as a collection of records. Each record is a JavaScript Object `{ key: value }`, and the collection is an Array `[ {...}, {...} ]`.
+- **Why this connects to MERN**:
+  - In MongoDB: This is a **Collection** of **Documents**.
+  - In Express: This is the **JSON response** returned by an API route.
+  - In React: This is the **state array** passed into components.
+
+### 2. The Big 4 Array Methods (Must-Know for React & Placements)
+
+| Method | What it Does | Does it Mutate Original? | What it Returns | Used in Project For |
+| :--- | :--- | :--- | :--- | :--- |
+| **`map()`** | Runs a function on every item | ❌ No | **New array** of same length with transformed values | Turning product data objects into HTML card markup |
+| **`filter()`** | Evaluates a boolean condition on every item | ❌ No | **New array** containing only items that returned `true` | Search by keyword, filter by category & stock status |
+| **`find()`** | Searches for the first matching item | ❌ No | The **single matching element**, or `undefined` | Finding product details when "+ Add to Quote" is clicked |
+| **`reduce()`** | Accumulates all items into a single result | ❌ No | A **single accumulated value** (number, object, etc.) | Calculating total item count and quotation estimates |
+
+### 3. Destructuring & The Spread Operator (`...`)
+- **Object Destructuring**:
+  ```javascript
+  // Instead of: const title = product.title; const price = product.price;
+  const { title, price, inStock } = product;
+  ```
+- **The Spread Operator (`...`) for Immutability**:
+  ```javascript
+  // Adding an item to an array WITHOUT mutating the original:
+  const updatedCart = [...quoteCart, newItem];
+  ```
+  *Why immutability matters*: In React, state updates rely on reference equality checks. If you mutate an array using `.push()`, React might not detect the change and will fail to re-render the screen. The spread operator creates a new reference.
+
+### 4. Event Delegation Pattern
+- **Problem**: Attaching `addEventListener('click')` to every single button consumes memory and fails when new cards are added dynamically.
+- **Solution**: Attach **one single event listener** to the parent container (`#product-grid`), and use `event.target.closest('.add-to-quote-btn')` to catch clicks as they bubble up the DOM.
+
+### 5. Interview Questions: Layer 2
+1. **Q: What is the difference between `map()` and `forEach()`?**  
+   *Answer*: Both iterate over an array. However, `map()` transforms each element and returns a **brand new array**, leaving the original array untouched. `forEach()` simply executes a callback for side effects and returns `undefined`. In React, we use `map()` to render JSX lists because we need the returned array of elements.
+2. **Q: Why should we prefer `const` and `let` over `var`?**  
+   *Answer*: `var` is function-scoped and undergoes hoisting with initialization to `undefined`, frequently causing subtle scoping bugs. `const` and `let` are block-scoped (confined to `{ }`), do not attach to the global `window` object, and reside in a "Temporal Dead Zone" before declaration, preventing accidental use before initialization. `const` also guarantees reference reassignment safety.

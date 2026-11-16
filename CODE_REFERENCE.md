@@ -46,4 +46,25 @@ This reference catalogs every key function, hook, method, and library used throu
 
 ---
 
+## JavaScript Core Methods & Operations
+
+### Array Manipulation Methods
+| Method | Type | Signature | Purpose & Project Usage |
+| :--- | :--- | :--- | :--- |
+| `Array.map()` | Pure Transformation | `arr.map(callback(item, index))` | Converts raw product objects into HTML strings in `renderProducts()` |
+| `Array.filter()` | Pure Selection | `arr.filter(predicate(item))` | Filters products by search query, category, and stock status in `filterCatalogue()` |
+| `Array.find()` | Search / Retrieval | `arr.find(predicate(item))` | Finds a product by its unique `id` when clicking "+ Add to Quote Request" |
+| `Array.reduce()` | Aggregation | `arr.reduce((acc, curr) => acc + curr, initial)` | Calculates the total quantity of items in the quotation cart in `renderQuoteCart()` |
+| `Array.join('')` | String Conversion | `arr.join(separator)` | Joins an array of HTML template strings into one continuous string for `.innerHTML` |
+
+### Modern ES6+ Syntax
+| Syntax Pattern | Name | Purpose & Project Usage |
+| :--- | :--- | :--- |
+| `const { id, title } = obj;` | Object Destructuring | Unpacks properties directly into variables in `renderProducts()` |
+| `[...arr, newItem]` | Spread Operator | Immutably clones arrays and appends items in `addToQuote()` |
+| `` `Hello ${name}` `` | Template Literals | Multi-line string interpolation for HTML generation |
+| `export const / import { }` | ES Modules | Modularizes data models (`productsData.js`) and controllers (`app.js`) |
+
+---
+
 *(As we build through each layer, we will continually expand this dictionary with JavaScript array methods, React hooks, Express router methods, and Mongoose database operations!)*

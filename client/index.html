@@ -133,139 +133,10 @@
       </div>
 
       <!-- CSS CONCEPT: CSS Grid Container for Product Cards -->
+      <!-- JAVASCRIPT CONCEPT: Dynamic DOM Insertion -->
+      <!-- In Layer 2, products are rendered dynamically from an Array of Objects via renderProducts() in app.js -->
       <div class="product-grid" id="product-grid">
-
-        <!-- PRODUCT CARD 1 -->
-        <!-- HTML CONCEPT: Semantic <article> for self-contained independent content -->
-        <article class="product-card" data-category="machinery" data-product-id="prod-001">
-          <div class="product-card-badge-container">
-            <span class="badge badge-success">In Stock</span>
-          </div>
-          <div class="product-image-placeholder" aria-hidden="true">
-            ⚙️ <span>Heavy Machinery</span>
-          </div>
-          <div class="product-card-body">
-            <div class="product-category-tag">Industrial Machinery</div>
-            <h3 class="product-title">Variable-Speed Industrial Drill Press 1.5HP</h3>
-            <p class="product-sku">SKU: IND-DP-9021</p>
-            <p class="product-description">
-              Commercial grade 16-speed floor drill press equipped with laser alignment and cast iron table for high precision manufacturing.
-            </p>
-            <div class="product-specs">
-              <span class="spec-tag">1.5 HP Motor</span>
-              <span class="spec-tag">120V / 240V</span>
-              <span class="spec-tag">Floor Mount</span>
-            </div>
-          </div>
-          <div class="product-card-footer">
-            <div class="price-estimate">
-              <span class="price-label">Catalogue Estimate:</span>
-              <span class="price-value">$1,250.00</span>
-            </div>
-            <!-- Action Button -->
-            <button class="btn btn-primary btn-block add-to-quote-btn" data-id="prod-001">
-              + Add to Quote Request
-            </button>
-          </div>
-        </article>
-
-        <!-- PRODUCT CARD 2 (Out of stock / Procurement required) -->
-        <!-- Demonstrates our core business requirement: quotes can be requested for any item! -->
-        <article class="product-card" data-category="safety" data-product-id="prod-002">
-          <div class="product-card-badge-container">
-            <span class="badge badge-warning">Procurement Required</span>
-          </div>
-          <div class="product-image-placeholder" aria-hidden="true">
-            🧤 <span>Safety Equipment</span>
-          </div>
-          <div class="product-card-body">
-            <div class="product-category-tag">Safety & PPE</div>
-            <h3 class="product-title">Kevlar Level-5 Cut Resistant Work Gloves (Case of 100)</h3>
-            <p class="product-sku">SKU: PPE-GLV-4412</p>
-            <p class="product-description">
-              High-dexterity polyurethane coated work gloves designed for sheet metal and glass handling. Sold in wholesale case packs.
-            </p>
-            <div class="product-specs">
-              <span class="spec-tag">ANSI Cut A5</span>
-              <span class="spec-tag">Case of 100</span>
-              <span class="spec-tag">Sizes S-XXL</span>
-            </div>
-          </div>
-          <div class="product-card-footer">
-            <div class="price-estimate">
-              <span class="price-label">Catalogue Estimate:</span>
-              <span class="price-value">$320.00 / case</span>
-            </div>
-            <button class="btn btn-secondary btn-block add-to-quote-btn" data-id="prod-002">
-              + Request Custom Quote
-            </button>
-          </div>
-        </article>
-
-        <!-- PRODUCT CARD 3 -->
-        <article class="product-card" data-category="tools" data-product-id="prod-003">
-          <div class="product-card-badge-container">
-            <span class="badge badge-success">In Stock</span>
-          </div>
-          <div class="product-image-placeholder" aria-hidden="true">
-            📏 <span>Precision Measuring</span>
-          </div>
-          <div class="product-card-body">
-            <div class="product-category-tag">Precision Tools</div>
-            <h3 class="product-title">Digital Stainless Steel Calipers 0-150mm</h3>
-            <p class="product-sku">SKU: TLS-CAL-1088</p>
-            <p class="product-description">
-              IP54 water/dust resistant digital caliper with inch/metric conversion and high accuracy LCD screen for quality control.
-            </p>
-            <div class="product-specs">
-              <span class="spec-tag">0.01mm Accuracy</span>
-              <span class="spec-tag">IP54 Certified</span>
-              <span class="spec-tag">Hard Case</span>
-            </div>
-          </div>
-          <div class="product-card-footer">
-            <div class="price-estimate">
-              <span class="price-label">Catalogue Estimate:</span>
-              <span class="price-value">$68.50</span>
-            </div>
-            <button class="btn btn-primary btn-block add-to-quote-btn" data-id="prod-003">
-              + Add to Quote Request
-            </button>
-          </div>
-        </article>
-
-        <!-- PRODUCT CARD 4 -->
-        <article class="product-card" data-category="office" data-product-id="prod-004">
-          <div class="product-card-badge-container">
-            <span class="badge badge-warning">Procurement Required</span>
-          </div>
-          <div class="product-image-placeholder" aria-hidden="true">
-            🪑 <span>Warehouse Setup</span>
-          </div>
-          <div class="product-card-body">
-            <div class="product-category-tag">Office & Warehouse</div>
-            <h3 class="product-title">Modular Heavy-Duty Packing Workstation 72"</h3>
-            <p class="product-sku">SKU: WHS-WRK-5520</p>
-            <p class="product-description">
-              Steel-frame packing station with adjustable shelves, power strip mount, and roll dispenser for fulfillment centers.
-            </p>
-            <div class="product-specs">
-              <span class="spec-tag">1000 lbs Capacity</span>
-              <span class="spec-tag">72" x 36" Table</span>
-              <span class="spec-tag">Modular Racks</span>
-            </div>
-          </div>
-          <div class="product-card-footer">
-            <div class="price-estimate">
-              <span class="price-label">Catalogue Estimate:</span>
-              <span class="price-value">$890.00</span>
-            </div>
-            <button class="btn btn-secondary btn-block add-to-quote-btn" data-id="prod-004">
-              + Request Custom Quote
-            </button>
-          </div>
-        </article>
-
+        <!-- Injected dynamically by client/js/app.js -->
       </div>
     </section>
 
@@ -298,50 +169,10 @@
               <th scope="col" class="text-right">Action</th>
             </tr>
           </thead>
+          <!-- JAVASCRIPT CONCEPT: Dynamic Table Body Population -->
+          <!-- In Layer 2, quotation items are dynamically rendered by renderQuoteCart() in app.js -->
           <tbody>
-            <!-- Line Item 1 -->
-            <tr>
-              <td>
-                <div class="table-product-cell">
-                  <strong>Variable-Speed Industrial Drill Press 1.5HP</strong>
-                  <span class="product-sku">SKU: IND-DP-9021</span>
-                </div>
-              </td>
-              <td>
-                <span class="badge badge-success">In Stock (Warehouse A)</span>
-              </td>
-              <td class="text-center">
-                <input type="number" class="qty-input" value="2" min="1" max="100" aria-label="Quantity for Drill Press">
-              </td>
-              <td>
-                <input type="text" class="form-input form-input-sm" placeholder="e.g., Need 240V pre-wired" value="Need 240V plug configuration">
-              </td>
-              <td class="text-right">
-                <button type="button" class="btn-icon btn-danger" title="Remove item" aria-label="Remove item">✕</button>
-              </td>
-            </tr>
-
-            <!-- Line Item 2 -->
-            <tr>
-              <td>
-                <div class="table-product-cell">
-                  <strong>Kevlar Level-5 Cut Resistant Work Gloves</strong>
-                  <span class="product-sku">SKU: PPE-GLV-4412</span>
-                </div>
-              </td>
-              <td>
-                <span class="badge badge-warning">Procurement Required</span>
-              </td>
-              <td class="text-center">
-                <input type="number" class="qty-input" value="10" min="1" max="500" aria-label="Quantity for Gloves">
-              </td>
-              <td>
-                <input type="text" class="form-input form-input-sm" placeholder="e.g., 5 Large, 5 X-Large" value="5 Large, 5 X-Large packs">
-              </td>
-              <td class="text-right">
-                <button type="button" class="btn-icon btn-danger" title="Remove item" aria-label="Remove item">✕</button>
-              </td>
-            </tr>
+            <!-- Populated dynamically by client/js/app.js -->
           </tbody>
         </table>
       </div>
@@ -427,6 +258,11 @@
       </p>
     </div>
   </footer>
+
+  <!-- JAVASCRIPT CONCEPT: ES Module Script Loading -->
+  <!-- "type='module'" enables modern ES6 import/export syntax natively in browsers -->
+  <!-- Placed at the bottom of <body> so all HTML DOM elements exist before the script executes -->
+  <script type="module" src="js/app.js"></script>
 
 </body>
 </html>
