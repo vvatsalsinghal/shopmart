@@ -1,0 +1,20 @@
+{
+  "name": "shopmart-quotation-system",
+  "version": "1.0.0",
+  "description": "B2B Product Catalogue and Quotation Management System - Complete MERN Project",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mern",
+    "react",
+    "express",
+    "nodejs",
+    "mongodb",
+    "quotations",
+    "catalogue"
+  ],
+  "author": "Neeraj Gupta",
+  "license": "ISC"
+}
