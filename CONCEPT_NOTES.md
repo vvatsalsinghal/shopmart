@@ -127,3 +127,76 @@ This living document contains detailed explanations, mental models, code snippet
    *Answer*: Both iterate over an array. However, `map()` transforms each element and returns a **brand new array**, leaving the original array untouched. `forEach()` simply executes a callback for side effects and returns `undefined`. In React, we use `map()` to render JSX lists because we need the returned array of elements.
 2. **Q: Why should we prefer `const` and `let` over `var`?**  
    *Answer*: `var` is function-scoped and undergoes hoisting with initialization to `undefined`, frequently causing subtle scoping bugs. `const` and `let` are block-scoped (confined to `{ }`), do not attach to the global `window` object, and reside in a "Temporal Dead Zone" before declaration, preventing accidental use before initialization. `const` also guarantees reference reassignment safety.
+
+---
+
+## Layer 3: Advanced Asynchronous JavaScript & HTTP APIs
+
+### 1. The Asynchronous Problem & The Single Thread
+- **Concept**: JavaScript has a **single Call Stack**. It executes one operation at a time.
+- **The Problem**: Network requests across the internet (e.g. querying products or saving quotations) take time (200ms - 2000ms). If JavaScript paused synchronously, the entire browser would freeze: animations stop, clicks don't register, and the page becomes unresponsive.
+- **The Solution**: Asynchronous non-blocking architecture using **Web APIs**, **Promises**, and the **Event Loop**.
+
+### 2. The JavaScript Event Loop Architecture
+```
+┌────────────────────────────────────────────────────────┐
+│ 1. CALL STACK: Executes synchronous code line by line  │
+└────────────────────────────────────────────────────────┘
+                           │
+       (Asynchronous task encountered, e.g. fetch/setTimeout)
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│ 2. WEB APIs: Browser background threads handle network │
+└────────────────────────────────────────────────────────┘
+                           │
+                 (Task finishes / data arrives)
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│ 3. MICROTASK QUEUE: Holds resolved Promises (.then)    │
+│    TASK QUEUE: Holds timer callbacks (setTimeout)      │
+└────────────────────────────────────────────────────────┘
+                           │
+         (Call Stack becomes completely empty)
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│ 4. THE EVENT LOOP: Pushes queued callbacks onto Stack  │
+└────────────────────────────────────────────────────────┘
+```
+
+### 3. Evolution of Async Code: Callbacks -> Promises -> async/await
+- **Callbacks (Legacy)**: Passing functions as arguments (`getData(function(err, data) { ... })`). Led to nested "Callback Hell".
+- **Promises (ES6)**: Objects representing future completion:
+  ```javascript
+  fetchProductsApi()
+    .then(data => renderProducts(data))
+    .catch(error => console.error(error));
+  ```
+- **`async` / `await` (ES8 / Modern Standard)**:
+  Syntactic sugar over Promises that makes asynchronous code read like clean synchronous code:
+  ```javascript
+  try {
+    const data = await fetchProductsApi();
+    renderProducts(data);
+  } catch (error) {
+    console.error("Network failed:", error);
+  }
+  ```
+
+### 4. HTTP Fundamentals & Status Codes
+- **HTTP Methods**:
+  - `GET`: Retrieve data without modifying server state (e.g., loading product catalogue).
+  - `POST`: Submit new data to create a resource (e.g., submitting a quotation request).
+  - `PUT` / `PATCH`: Update an existing resource (e.g., Admin assigning a price and arrival date).
+  - `DELETE`: Remove a resource.
+- **Standard HTTP Status Codes**:
+  - `200 OK`: Successful retrieval.
+  - `201 Created`: Resource successfully created (used on quotation submission).
+  - `400 Bad Request`: Client validation error (e.g., missing email or empty items).
+  - `404 Not Found`: Target resource does not exist.
+  - `500 Internal Server Error`: Backend crash or database failure.
+
+### 5. Interview Questions: Layer 3
+1. **Q: What is the difference between the Microtask Queue and the Macrotask (Callback) Queue?**  
+   *Answer*: Both queues hold asynchronous callbacks waiting to run on the Call Stack. However, the Event Loop gives **higher priority to the Microtask Queue** (which handles Promises, `queueMicrotask`, and MutationObserver). All microtasks must be completely cleared before the Event Loop executes even one single macrotask (such as `setTimeout` or `setInterval`).
+2. **Q: Why does `await` not freeze the browser tab?**  
+   *Answer*: `await` pauses the execution of only the *current `async` function*, temporarily yielding control back to the Event Loop. The JavaScript runtime continues processing other events, user scrolls, button clicks, and paint updates on the Call Stack. When the awaited Promise settles, the remainder of the async function is pushed to the Microtask Queue to resume execution seamlessly.

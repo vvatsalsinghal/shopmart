@@ -6,38 +6,20 @@
 // =============================================================================
 
 // JAVASCRIPT CONCEPT: ES Module Import
-// Imports the data array from our separate data file.
-import { initialProducts } from './productsData.js';
+// In Layer 3, we import our Asynchronous Network Client instead of raw static data.
+import { fetchProductsApi, submitQuotationApi } from './apiService.js';
 
 // =============================================================================
 // APPLICATION STATE (IN-MEMORY DATA STORE)
-// PROGRAMMING CONCEPT: Application State
-// "State" is the single source of truth describing what data the app is holding
-// at any given millisecond. When state changes, the UI updates to reflect it.
-// In Layer 4 & 5, this will be managed by React's useState and Context API!
+// PROGRAMMING CONCEPT: Asynchronous State Initialization
+// Products start as an empty array []. They are populated ONLY AFTER the
+// HTTP network request resolves. This teaches you how real-world React apps work!
 // =============================================================================
 
-// JAVASCRIPT CONCEPT: Spread Operator (...) for Array Cloning
-// [...initialProducts] creates a shallow copy of the array so we never mutate
-// the original dataset directly.
-const products = [...initialProducts];
+let products = [];
 
 // The customer's quotation enquiry cart (list of items requested for quote)
-let quoteCart = [
-  // Seed with 2 default items so the table is populated when the page loads
-  {
-    productId: "prod-001",
-    product: products[0],
-    quantity: 2,
-    customerNote: "Need 240V plug configuration"
-  },
-  {
-    productId: "prod-002",
-    product: products[1],
-    quantity: 10,
-    customerNote: "5 Large, 5 X-Large packs"
-  }
-];
+let quoteCart = [];
 
 // Active filters state
 let currentCategory = "all";
@@ -437,8 +419,10 @@ if (quoteCartTrigger) {
   });
 }
 
-// 8. Quotation Form Submission Handler
-quoteFormEl.addEventListener("submit", (event) => {
+// 8. Quotation Form Submission Handler (ASYNCHRONOUS)
+// JAVASCRIPT CONCEPT: async Event Listener Callback
+// Marking the callback function with "async" allows us to use "await" inside it.
+quoteFormEl.addEventListener("submit", async (event) => {
   event.preventDefault(); // Prevents default browser page reload
 
   // SECURITY CONCEPT: Client-side Form Validation
@@ -446,6 +430,9 @@ quoteFormEl.addEventListener("submit", (event) => {
     alert("⚠️ Please add at least one product to your quotation request before submitting.");
     return;
   }
+
+  const submitButton = quoteFormEl.querySelector("button[type='submit']");
+  const originalButtonText = submitButton.innerHTML;
 
   // JAVASCRIPT CONCEPT: Collecting Form Values into an Object
   const quotationSubmission = {
@@ -461,32 +448,145 @@ quoteFormEl.addEventListener("submit", (event) => {
       sku: item.product.sku,
       quantity: item.quantity,
       customerNote: item.customerNote,
+      inStock: item.product.inStock,
       cataloguePriceEstimate: item.product.price
     })),
-    specialInstructions: document.getElementById("additional-notes").value.trim(),
-    submittedAt: new Date().toISOString(),
-    status: "ENQUIRY_SUBMITTED"
+    specialInstructions: document.getElementById("additional-notes").value.trim()
   };
 
-  // PROGRAMMING CONCEPT: Inspecting Payload Structure
-  console.log("==========================================");
-  console.log("🚀 QUOTATION REQUEST PAYLOAD READY FOR API:");
-  console.log(JSON.stringify(quotationSubmission, null, 2));
-  console.log("==========================================");
+  try {
+    // UI FEEDBACK: Disable button & show loading state to prevent double submission
+    submitButton.disabled = true;
+    submitButton.innerHTML = "Submitting to Commercial Sales Desk... ⏳";
 
-  // Success Feedback
-  alert(`✅ Success! Quotation Enquiry for ${quotationSubmission.customer.companyName} submitted with ${quotationSubmission.items.length} items.\n\nOpen your browser console (F12 -> Console) to see the exact JSON payload that will be sent to Express in Layer 7 & 9!`);
+    // JAVASCRIPT CONCEPT: await Promise Resolution
+    // Network call: Pauses execution here until server returns confirmation!
+    const response = await submitQuotationApi(quotationSubmission);
 
-  // Clear form and cart after submission
-  quoteCart = [];
-  quoteFormEl.reset();
-  renderQuoteCart();
+    // Display Rich Confirmation Card on screen
+    const quotePanel = document.getElementById("quotation-panel");
+    const confirmationEl = document.createElement("div");
+    confirmationEl.className = "quotation-confirmation-card";
+    confirmationEl.innerHTML = `
+      <div class="confirmation-header">
+        <span style="font-size: 2rem;">🎉</span>
+        <div>
+          <h3>Quotation Registered Successfully!</h3>
+          <p style="color: #94a3b8; font-size: 0.875rem;">Your enquiry has been received and custom ETAs calculated.</p>
+        </div>
+      </div>
+      <div class="confirmation-details">
+        <div class="confirmation-item">
+          <span class="confirmation-label">Quotation ID</span>
+          <span class="confirmation-value" style="color: #38bdf8;">${response.quotationId}</span>
+        </div>
+        <div class="confirmation-item">
+          <span class="confirmation-label">Client</span>
+          <span class="confirmation-value">${response.customer.companyName}</span>
+        </div>
+        <div class="confirmation-item">
+          <span class="confirmation-label">Status</span>
+          <span class="confirmation-value" style="color: #facc15;">Pending Sales Approval</span>
+        </div>
+      </div>
+      <h4 style="font-size: 0.95rem; margin-top: 1rem; color: #cbd5e1;">Itemized Price & Delivery Schedule:</h4>
+      <table class="confirmation-items-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Admin Unit Price</th>
+            <th>Estimated Arrival Date (ETA)</th>
+            <th>Logistics Route</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${response.processedItems.map(item => `
+            <tr>
+              <td><strong>${item.title}</strong><br><span style="color: #94a3b8; font-size: 0.75rem;">${item.sku}</span></td>
+              <td>${item.quantity}</td>
+              <td style="color: #4ade80; font-weight: 600;">$${item.quotedUnitPrice}</td>
+              <td><strong>${item.estimatedArrivalDate}</strong></td>
+              <td><span class="badge ${item.procurementRoute.includes('Express') ? 'badge-success' : 'badge-warning'}">${item.procurementRoute}</span></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+
+    // Insert confirmation card right below the form
+    quotePanel.appendChild(confirmationEl);
+    confirmationEl.scrollIntoView({ behavior: "smooth" });
+
+    // Clear form and cart after submission
+    quoteCart = [];
+    quoteFormEl.reset();
+    renderQuoteCart();
+
+  } catch (error) {
+    // JAVASCRIPT CONCEPT: Asynchronous Error Handling
+    alert(`❌ Submission Error: ${error.message}`);
+    console.error("Quotation submission failed:", error);
+  } finally {
+    // JAVASCRIPT CONCEPT: try...catch...finally
+    // "finally" executes regardless of whether the operation succeeded or failed.
+    submitButton.disabled = false;
+    submitButton.innerHTML = originalButtonText;
+  }
 });
 
 // =============================================================================
-// INITIAL APPLICATION BOOTSTRAP
-// Runs automatically when the script loads into the browser.
+// ASYNCHRONOUS INITIALIZATION (BOOTSTRAP)
+// JAVASCRIPT CONCEPT: Async Function Execution on Page Load
 // =============================================================================
-renderProducts(products);
-renderQuoteCart();
-console.log("✅ ShopMart Layer 2 JavaScript initialized. Products rendered dynamically from data array.");
+async function loadCatalogue() {
+  // 1. Show User-Friendly Loading Spinner
+  productGridEl.innerHTML = `
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p class="loading-text">Connecting to ShopMart Commercial API...</p>
+      <p class="loading-subtext">Fetching real-time wholesale pricing and warehouse inventory</p>
+    </div>
+  `;
+
+  try {
+    // 2. Fetch products asynchronously over our simulated network
+    const data = await fetchProductsApi();
+    products = data;
+
+    // Seed 2 initial quote items from fetched data so the user sees sample data
+    quoteCart = [
+      {
+        productId: products[0].id,
+        product: products[0],
+        quantity: 2,
+        customerNote: "Need 240V plug configuration"
+      },
+      {
+        productId: products[1].id,
+        product: products[1],
+        quantity: 10,
+        customerNote: "5 Large, 5 X-Large packs"
+      }
+    ];
+
+    // 3. Render products and cart once data lands safely
+    renderProducts(products);
+    renderQuoteCart();
+    console.log("✅ [Layer 3] Asynchronous catalogue load complete.");
+
+  } catch (error) {
+    // 4. Handle Network Failures Gracefully
+    productGridEl.innerHTML = `
+      <div class="error-banner">
+        <h4>⚠️ Network Connection Failed</h4>
+        <p>${error.message}</p>
+        <button class="btn btn-primary" onclick="window.location.reload()">Retry Connection</button>
+      </div>
+    `;
+    console.error("Failed to load catalogue:", error);
+  }
+}
+
+// Start the asynchronous loading sequence!
+loadCatalogue();

@@ -7,7 +7,7 @@
 
 ---
 
-## Current Active Layer: Layer 2 (Core JavaScript Fundamentals & Data Modeling)
+## Current Active Layer: Layer 3 (Advanced Asynchronous JavaScript & HTTP APIs)
 
 | Layer | Topic / Skill | Status | Date Started | Date Mastered |
 | :--- | :--- | :--- | :--- | :--- |
@@ -23,9 +23,9 @@
 | **Layer 2** | Array Methods (`map`, `filter`, `find`, `reduce`) | 🔵 Practiced | 2026-11-16 | - |
 | **Layer 2** | Destructuring & Spread/Rest Operators | 🔵 Practiced | 2026-11-16 | - |
 | **Layer 2** | ES Modules (`import` / `export`) | 🔵 Practiced | 2026-11-16 | - |
-| **Layer 3** | Call Stack, Event Loop & Web APIs | ⚪ Pending | - | - |
-| **Layer 3** | Promises & `async/await` Patterns | ⚪ Pending | - | - |
-| **Layer 3** | Fetch API & HTTP Protocol Fundamentals | ⚪ Pending | - | - |
+| **Layer 3** | Call Stack, Event Loop & Web APIs | 🟡 Introduced | 2026-11-17 | - |
+| **Layer 3** | Promises & `async/await` Patterns | 🟡 Introduced | 2026-11-17 | - |
+| **Layer 3** | Fetch API & HTTP Protocol Fundamentals | 🟡 Introduced | 2026-11-17 | - |
 | **Layer 4** | React Components & JSX Rules | ⚪ Pending | - | - |
 | **Layer 4** | Props & Unidirectional Data Flow | ⚪ Pending | - | - |
 | **Layer 4** | `useState` & State Immutability | ⚪ Pending | - | - |

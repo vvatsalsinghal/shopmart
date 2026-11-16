@@ -67,4 +67,19 @@ This reference catalogs every key function, hook, method, and library used throu
 
 ---
 
+## Asynchronous JavaScript & Network API Operations
+
+### Asynchronous Operations
+| Pattern / Method | Mechanism | Purpose & Project Usage |
+| :--- | :--- | :--- |
+| `new Promise((resolve, reject) => ...)` | Asynchronous Primitive | Wraps deferred time-based network calls in `apiService.js` |
+| `async function name() { ... }` | Async Declaration | Enables non-blocking `await` statements inside function body |
+| `const result = await promise;` | Promise Resolution | Pauses async function until Promise settles without blocking thread |
+| `try { ... } catch (err) { ... }` | Exception Handling | Catches network timeouts, 400/500 errors, and validation errors |
+| `JSON.stringify(obj)` | Serialization | Converts in-memory JavaScript objects into wire-safe JSON strings |
+| `JSON.parse(string)` | Deserialization | Converts incoming JSON HTTP response strings into native JS objects |
+| `setTimeout(callback, ms)` | Timer / Web API | Simulates network round-trip latency in development |
+
+---
+
 *(As we build through each layer, we will continually expand this dictionary with JavaScript array methods, React hooks, Express router methods, and Mongoose database operations!)*
