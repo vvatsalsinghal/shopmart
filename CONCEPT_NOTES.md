@@ -39,3 +39,48 @@ This living document contains detailed explanations, mental models, code snippet
    *Answer*: `dependencies` are packages required for the application to run in production (e.g., `express`, `mongoose`, `react`). `devDependencies` are packages needed only during local development and testing (e.g., `nodemon`, `vite`, `eslint`). When deployed to production, `npm install --production` skips `devDependencies`, saving build time and disk space.
 2. **Q: What is the purpose of `package-lock.json`? Why should you commit it to Git?**  
    *Answer*: In `package.json`, versions typically use caret (`^`) or tilde (`~`) prefixes, which allow automatic minor or patch updates. Without `package-lock.json`, two developers running `npm install` on different days might get slightly different dependency versions, leading to "works on my machine" bugs. `package-lock.json` pins exact versions and integrity hashes for absolute reproducibility.
+
+---
+
+## Layer 1: HTML5 Semantics, Modern CSS & Layout Systems
+
+### 1. Semantic HTML5: Meaning Over Generic Containers
+- **Concept**: Semantic tags convey structural meaning to browsers, screen readers (accessibility), and search engines (SEO), rather than generic `<div>` soup.
+- **Key Elements**:
+  - `<header>`: Introductory branding, search bar, and cart triggers.
+  - `<main>`: The dominant, non-repeated content of the page.
+  - `<section>`: Thematic grouping of content (e.g., Catalogue section, Quotation Form section).
+  - `<article>`: Self-contained, independently distributable entity (e.g., a single Product Card).
+  - `<aside>`: Complementary navigation or contextual sidebar (e.g., category filters).
+  - `<table>`, `<thead>`, `<tbody>`, `<th>`, `<td>`: Structured tabular data for quotation line items.
+
+### 2. Modern Layouts: Flexbox vs CSS Grid
+- **Flexbox (1-Dimensional)**:
+  - Best for aligning items along a single axis (either row OR column).
+  - Used in: Header (aligning logo, search, cart), Product Card footers (aligning price and button), and form button rows.
+  - Key properties: `display: flex; justify-content: space-between; align-items: center; gap: 1rem;`.
+- **CSS Grid (2-Dimensional)**:
+  - Best for laying out items simultaneously across rows AND columns.
+  - Used in: Product Grid.
+  - The Golden Grid Pattern:
+    ```css
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    ```
+  - **Why this is revolutionary**: Without writing media queries for every screen size, the browser automatically computes how many 280px cards fit across the available width, wrapping and stretching (`1fr`) evenly.
+
+### 3. The CSS Box Model & `box-sizing: border-box`
+- By default, CSS uses `box-sizing: content-box`, where padding and borders are added *outside* the defined width/height (causing elements to exceed parent containers).
+- With `*, *::before, *::after { box-sizing: border-box; }`, padding and borders are calculated *inside* the width, eliminating unexpected scrollbars and overflow.
+
+### 4. CSS Custom Properties (Variables)
+- Defined on `:root` to provide global scope.
+- Example: `--primary: #1e40af; background-color: var(--primary);`.
+- In enterprise applications, changing themes (e.g. Dark Mode) simply requires reassigning variables on a parent selector without touching individual components.
+
+### 5. Interview Questions: Layer 1
+1. **Q: When would you choose CSS Grid over Flexbox?**  
+   *Answer*: Use Flexbox for 1-dimensional layouts where items need to align in a single direction (row or column) with content-driven sizing (e.g., navbars, button groups, badge lists). Use CSS Grid for 2-dimensional layouts where items must align across both rows and columns simultaneously, or for responsive repeating layouts like product catalogues (`grid-template-columns: repeat(auto-fill, minmax(...))`).
+2. **Q: Why should you avoid using only `<div>` elements for building a user interface?**  
+   *Answer*: Generic `<div>` tags provide no semantic meaning. Using semantic HTML5 elements (`<header>`, `<main>`, `<article>`, `<aside>`, `<nav>`) is critical for: (1) **Accessibility (a11y)**: screen readers can jump directly to landmark sections; (2) **SEO**: search engine web crawlers prioritize headers and articles; (3) **Maintainability**: other developers can immediately grasp component hierarchy.

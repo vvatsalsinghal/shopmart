@@ -7,17 +7,17 @@
 
 ---
 
-## Current Active Layer: Layer 0 (Development Environment & Setup)
+## Current Active Layer: Layer 1 (Frontend Foundations: Semantic HTML & Modern CSS)
 
 | Layer | Topic / Skill | Status | Date Started | Date Mastered |
 | :--- | :--- | :--- | :--- | :--- |
-| **Layer 0** | Workspace Organization (`client/` & `server/`) | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 0** | Git Initialization & `.gitignore` Rules | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 0** | Node.js Runtime Verification (`node -v`) | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 0** | npm & `package.json` Fundamentals | 🟡 Introduced | 2026-11-16 | - |
-| **Layer 1** | Semantic HTML5 for E-Commerce / B2B | ⚪ Pending | - | - |
-| **Layer 1** | CSS Flexbox & CSS Grid for Catalogues | ⚪ Pending | - | - |
-| **Layer 1** | Responsive Design & Mobile Breakpoints | ⚪ Pending | - | - |
+| **Layer 0** | Workspace Organization (`client/` & `server/`) | 🟢 Independent | 2026-11-16 | 2026-11-16 |
+| **Layer 0** | Git Initialization & `.gitignore` Rules | 🟢 Independent | 2026-11-16 | 2026-11-16 |
+| **Layer 0** | Node.js Runtime Verification (`node -v`) | 🟢 Independent | 2026-11-16 | 2026-11-16 |
+| **Layer 0** | npm & `package.json` Fundamentals | 🟢 Independent | 2026-11-16 | 2026-11-16 |
+| **Layer 1** | Semantic HTML5 for E-Commerce / B2B | 🟡 Introduced | 2026-11-16 | - |
+| **Layer 1** | CSS Flexbox & CSS Grid for Catalogues | 🟡 Introduced | 2026-11-16 | - |
+| **Layer 1** | Responsive Design & Mobile Breakpoints | 🟡 Introduced | 2026-11-16 | - |
 | **Layer 2** | Modern JS Variables (`const`, `let`) & Scope | ⚪ Pending | - | - |
 | **Layer 2** | Arrow Functions & Return Semantics | ⚪ Pending | - | - |
 | **Layer 2** | Array Methods (`map`, `filter`, `find`, `reduce`) | ⚪ Pending | - | - |
