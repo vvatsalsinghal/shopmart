@@ -1,17 +1,20 @@
 // =============================================================================
 // FILE: client/src/components/ProductCard.jsx
 // PURPOSE: Reusable Card Component for an individual product in the catalogue.
-// REACT CONCEPT: Presentational / Pure Component
-// Renders UI based strictly on props passed down from the parent.
+// REACT CONCEPT: Consuming Context via Custom Hook (useQuoteCart)
 // =============================================================================
 
 import React from 'react';
+import { useQuoteCart } from '../context/QuoteCartContext.jsx';
 
-export default function ProductCard({ product, onAddToQuote }) {
-  // JAVASCRIPT CONCEPT: Destructuring Object Properties
-  const { id, title, sku, category, categoryLabel, description, price, unit, inStock, specs, icon } = product;
+export default function ProductCard({ product }) {
+  // REACT CONCEPT: Direct Context Consumption
+  // No more prop drilling from App -> ProductGrid -> ProductCard!
+  // This component connects directly to the global QuoteCartContext cloud.
+  const { addToQuote } = useQuoteCart();
 
-  // REACT CONCEPT: Conditional Class Names & Labels
+  const { title, sku, category, categoryLabel, description, price, unit, inStock, specs, icon } = product;
+
   const badgeClass = inStock ? "badge-success" : "badge-warning";
   const badgeText = inStock ? "In Stock" : "Procurement Required";
   const btnClass = inStock ? "btn-primary" : "btn-secondary";
@@ -26,7 +29,7 @@ export default function ProductCard({ product, onAddToQuote }) {
 
       {/* Visual Placeholder */}
       <div className="product-image-placeholder" aria-hidden="true">
-        {icon} <span>{categoryLabel}</span>
+        {icon} <span>${categoryLabel}</span>
       </div>
 
       {/* Card Content Body */}
@@ -37,7 +40,6 @@ export default function ProductCard({ product, onAddToQuote }) {
         <p className="product-description">{description}</p>
 
         {/* Technical Specifications Tags */}
-        {/* REACT CONCEPT: Array.map() inside JSX with unique "key" prop */}
         <div className="product-specs">
           {specs.map((spec, index) => (
             <span key={index} className="spec-tag">
@@ -54,10 +56,10 @@ export default function ProductCard({ product, onAddToQuote }) {
           <span className="price-value">${price.toFixed(2)} / {unit}</span>
         </div>
 
-        {/* Action Button: Fires parent callback passing this product's ID */}
+        {/* Action Button: Directly calls addToQuote from Context! */}
         <button
           className={`btn ${btnClass} btn-block add-to-quote-btn`}
-          onClick={() => onAddToQuote(id)}
+          onClick={() => addToQuote(product)}
         >
           {btnText}
         </button>

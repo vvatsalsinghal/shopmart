@@ -1,16 +1,16 @@
 // =============================================================================
 // FILE: client/src/components/Header.jsx
 // PURPOSE: Top Navigation Bar with Branding, Search Bar, and Quotation Badge.
-// REACT CONCEPT: Functional Component & Props
-// A component is a pure JavaScript function that receives "props" (inputs)
-// and returns JSX describing what the HTML structure should look like.
+// REACT CONCEPT: Subscribing to Global Context via Custom Hook
 // =============================================================================
 
 import React from 'react';
+import { useQuoteCart } from '../context/QuoteCartContext.jsx';
 
-// REACT CONCEPT: Destructuring Props in Function Signature
-// Instead of writing (props) and props.quoteCount, we extract them directly!
-export default function Header({ searchQuery, onSearchChange, quoteCount, onCartClick }) {
+// Notice: quoteCount prop is GONE! Header reads it directly from the Context cloud.
+export default function Header({ searchQuery, onSearchChange, onCartClick }) {
+  const { totalItemCount } = useQuoteCart();
+
   return (
     <header className="app-header">
       <div className="header-container container">
@@ -24,8 +24,6 @@ export default function Header({ searchQuery, onSearchChange, quoteCount, onCart
         </div>
 
         {/* Search Bar */}
-        {/* REACT CONCEPT: Controlled Input */}
-        {/* The input's value is controlled by React state via the "searchQuery" prop */}
         <form className="search-form" role="search" onSubmit={(e) => e.preventDefault()}>
           <input
             type="search"
@@ -33,8 +31,6 @@ export default function Header({ searchQuery, onSearchChange, quoteCount, onCart
             className="search-input"
             placeholder="Search products by title, SKU, or category..."
             value={searchQuery}
-            // REACT CONCEPT: Synthetic Event Handling
-            // onChange fires on every keystroke, calling the parent's state updater function
             onChange={(e) => onSearchChange(e.target.value)}
             aria-label="Search products in catalogue"
           />
@@ -47,10 +43,9 @@ export default function Header({ searchQuery, onSearchChange, quoteCount, onCart
         <button className="quote-cart-btn" onClick={onCartClick} aria-haspopup="dialog">
           <span className="cart-icon">📋</span>
           <span className="cart-text">Quote Request</span>
-          {/* REACT CONCEPT: Dynamic Expression Binding */}
-          {/* {quoteCount} automatically updates whenever the parent component's cart changes! */}
+          {/* Automatically updates from QuoteCartContext! */}
           <span className="badge badge-counter" id="cart-counter">
-            {quoteCount}
+            {totalItemCount}
           </span>
         </button>
       </div>

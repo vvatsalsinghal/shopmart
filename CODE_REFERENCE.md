@@ -87,8 +87,11 @@ This reference catalogs every key function, hook, method, and library used throu
 ### React Hooks
 | Hook | Signature | Purpose & Project Usage |
 | :--- | :--- | :--- |
-| `useState` | `const [state, setState] = useState(initial)` | Declares reactive state in `<App />` and `<QuotationForm />` |
+| `useState` | `const [state, setState] = useState(initial)` | Declares reactive state in `<App />` and `<QuoteCartProvider />` |
 | `useEffect` | `useEffect(callback, dependencies)` | Triggers asynchronous catalogue loading on component mount in `<App />` |
+| `createContext` | `const Context = createContext(defaultVal)` | Creates global Context in `QuoteCartContext.jsx` |
+| `useContext` | `const value = useContext(Context)` | Consumes global Context values inside custom hooks |
+| `useQuoteCart` | `const { quoteCart, addToQuote } = useQuoteCart()` | Custom Hook providing direct cart access to any component |
 
 ### Core React Architecture Patterns
 | Pattern | How It Works | Where Used in Project |

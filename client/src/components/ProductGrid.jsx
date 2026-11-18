@@ -1,13 +1,14 @@
 // =============================================================================
 // FILE: client/src/components/ProductGrid.jsx
 // PURPOSE: Catalogue container handling Loading, Error, Empty, and List states.
-// REACT CONCEPT: Conditional Rendering (Loading vs Error vs Empty vs List)
+// REACT CONCEPT: Clean Component Architecture (Zero Prop Drilling!)
 // =============================================================================
 
 import React from 'react';
 import ProductCard from './ProductCard.jsx';
 
-export default function ProductGrid({ products, isLoading, error, onAddToQuote, onRetry }) {
+// Notice: onAddToQuote is GONE! ProductGrid doesn't have to carry props it doesn't use.
+export default function ProductGrid({ products, isLoading, error, onRetry }) {
   // STATE 1: ASYNC LOADING STATE
   if (isLoading) {
     return (
@@ -51,13 +52,10 @@ export default function ProductGrid({ products, isLoading, error, onAddToQuote, 
   // STATE 4: SUCCESS LIST RENDERING
   return (
     <div className="product-grid">
-      {/* REACT CONCEPT: Rendering Lists with .map() & Keys */}
-      {/* React uses the unique "key" prop to optimize Virtual DOM diffing during updates */}
       {products.map((product) => (
         <ProductCard
           key={product.id}
           product={product}
-          onAddToQuote={onAddToQuote}
         />
       ))}
     </div>

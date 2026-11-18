@@ -7,7 +7,7 @@
 
 ---
 
-## Current Active Layer: Layer 4 (React Fundamentals & Component Architecture)
+## Current Active Layer: Layer 5 (Advanced React: Context API & Custom Hooks)
 
 | Layer | Topic / Skill | Status | Date Started | Date Mastered |
 | :--- | :--- | :--- | :--- | :--- |
@@ -26,15 +26,15 @@
 | **Layer 3** | Call Stack, Event Loop & Web APIs | 🔵 Practiced | 2026-11-17 | - |
 | **Layer 3** | Promises & `async/await` Patterns | 🔵 Practiced | 2026-11-17 | - |
 | **Layer 3** | Fetch API & HTTP Protocol Fundamentals | 🔵 Practiced | 2026-11-17 | - |
-| **Layer 4** | React Components & JSX Rules | 🟡 Introduced | 2026-11-18 | - |
-| **Layer 4** | Props & Unidirectional Data Flow | 🟡 Introduced | 2026-11-18 | - |
-| **Layer 4** | `useState` & State Immutability | 🟡 Introduced | 2026-11-18 | - |
-| **Layer 4** | `useEffect` & Component Lifecycle | 🟡 Introduced | 2026-11-18 | - |
-| **Layer 4** | Controlled Forms & Event Handling | 🟡 Introduced | 2026-11-18 | - |
+| **Layer 4** | React Components & JSX Rules | 🔵 Practiced | 2026-11-18 | - |
+| **Layer 4** | Props & Unidirectional Data Flow | 🔵 Practiced | 2026-11-18 | - |
+| **Layer 4** | `useState` & State Immutability | 🔵 Practiced | 2026-11-18 | - |
+| **Layer 4** | `useEffect` & Component Lifecycle | 🔵 Practiced | 2026-11-18 | - |
+| **Layer 4** | Controlled Forms & Event Handling | 🔵 Practiced | 2026-11-18 | - |
 | **Layer 4** | React Router Single-Page Navigation | ⚪ Pending | - | - |
-| **Layer 5** | React Context API (Auth & Quote Cart) | ⚪ Pending | - | - |
-| **Layer 5** | Custom Hooks Creation | ⚪ Pending | - | - |
-| **Layer 5** | Reusable UI Component Systems | ⚪ Pending | - | - |
+| **Layer 5** | React Context API (Auth & Quote Cart) | 🟡 Introduced | 2026-11-19 | - |
+| **Layer 5** | Custom Hooks Creation (`useQuoteCart`) | 🟡 Introduced | 2026-11-19 | - |
+| **Layer 5** | Reusable UI Component Systems | 🟡 Introduced | 2026-11-19 | - |
 | **Layer 6** | Node.js Architecture (libuv, V8) | ⚪ Pending | - | - |
 | **Layer 6** | Environment Variables with `dotenv` | ⚪ Pending | - | - |
 | **Layer 7** | Express.js Server & Application Architecture | ⚪ Pending | - | - |

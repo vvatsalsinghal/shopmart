@@ -1,36 +1,69 @@
 // =============================================================================
 // FILE: client/src/components/QuotationForm.jsx
 // PURPOSE: Client contact & procurement logistics submission form.
-// REACT CONCEPT: Controlled Form Component with Multiple Input States
+// REACT CONCEPT: Combining Local Form State with Global Context (useQuoteCart)
 // =============================================================================
 
 import React, { useState } from 'react';
+import { useQuoteCart } from '../context/QuoteCartContext.jsx';
+import { submitQuotationApi } from '../services/apiService.js';
 
-export default function QuotationForm({ onSubmit, isSubmitting, hasItems }) {
-  // REACT CONCEPT: Multiple State Slices in a Form
+export default function QuotationForm({ onQuotationSuccess }) {
+  // Grab quoteCart and clearCart directly from Context!
+  const { quoteCart, clearCart } = useQuoteCart();
+
+  // Local Form Input States
   const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [desiredDeliveryDate, setDesiredDeliveryDate] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!hasItems) {
+    if (quoteCart.length === 0) {
       alert("⚠️ Please add at least one product to your quotation request before submitting.");
       return;
     }
 
-    const customerData = {
-      companyName: companyName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      desiredDeliveryDate,
-      specialInstructions: additionalNotes.trim()
+    const payload = {
+      customer: {
+        companyName: companyName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        desiredDeliveryDate,
+        specialInstructions: additionalNotes.trim()
+      },
+      items: quoteCart.map((item) => ({
+        productId: item.productId,
+        title: item.product.title,
+        sku: item.product.sku,
+        quantity: item.quantity,
+        customerNote: item.customerNote,
+        inStock: item.product.inStock,
+        cataloguePriceEstimate: item.product.price
+      }))
     };
 
-    onSubmit(customerData);
+    setIsSubmitting(true);
+    try {
+      const response = await submitQuotationApi(payload);
+      onQuotationSuccess(response);
+      clearCart(); // Empties the cart globally!
+      
+      // Reset local form fields
+      setCompanyName('');
+      setEmail('');
+      setPhone('');
+      setDesiredDeliveryDate('');
+      setAdditionalNotes('');
+    } catch (err) {
+      alert(`❌ Submission Error: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

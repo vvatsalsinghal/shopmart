@@ -1,13 +1,17 @@
 // =============================================================================
 // FILE: client/src/components/QuotationTable.jsx
 // PURPOSE: Itemized quotation table displaying selected items, quantities, and notes.
-// REACT CONCEPT: Controlled Form Rows & Dynamic List Operations
+// REACT CONCEPT: Consuming Context State & Dispatch Functions
 // =============================================================================
 
 import React from 'react';
+import { useQuoteCart } from '../context/QuoteCartContext.jsx';
 
-export default function QuotationTable({ items, onQuantityChange, onNoteChange, onRemoveItem }) {
-  if (items.length === 0) {
+// Notice: All 4 props are GONE! Table connects directly to QuoteCartContext.
+export default function QuotationTable() {
+  const { quoteCart, updateQuantity, updateNote, removeFromQuote } = useQuoteCart();
+
+  if (quoteCart.length === 0) {
     return (
       <div className="table-responsive">
         <table className="quote-table">
@@ -36,7 +40,7 @@ export default function QuotationTable({ items, onQuantityChange, onNoteChange, 
           </tr>
         </thead>
         <tbody>
-          {items.map((cartItem) => {
+          {quoteCart.map((cartItem) => {
             const { product, quantity, customerNote } = cartItem;
             const isReady = product.inStock;
             const badgeClass = isReady ? 'badge-success' : 'badge-warning';
@@ -65,7 +69,7 @@ export default function QuotationTable({ items, onQuantityChange, onNoteChange, 
                     value={quantity}
                     min="1"
                     max="1000"
-                    onChange={(e) => onQuantityChange(cartItem.productId, e.target.value)}
+                    onChange={(e) => updateQuantity(cartItem.productId, e.target.value)}
                     aria-label={`Quantity for ${product.title}`}
                   />
                 </td>
@@ -77,7 +81,7 @@ export default function QuotationTable({ items, onQuantityChange, onNoteChange, 
                     className="form-input form-input-sm"
                     placeholder="e.g., custom voltage, packaging specs"
                     value={customerNote || ''}
-                    onChange={(e) => onNoteChange(cartItem.productId, e.target.value)}
+                    onChange={(e) => updateNote(cartItem.productId, e.target.value)}
                   />
                 </td>
 
@@ -87,7 +91,7 @@ export default function QuotationTable({ items, onQuantityChange, onNoteChange, 
                     type="button"
                     className="btn-icon btn-danger"
                     title={`Remove ${product.title} from quote`}
-                    onClick={() => onRemoveItem(cartItem.productId)}
+                    onClick={() => removeFromQuote(cartItem.productId)}
                   >
                     ✕
                   </button>

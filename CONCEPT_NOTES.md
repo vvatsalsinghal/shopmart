@@ -261,3 +261,27 @@ useEffect(() => {
    *Answer*: During reconciliation, React's diffing algorithm uses the `key` to identify which items have changed, been added, or been removed. Without stable unique keys (or when using array indices on dynamic lists), React may re-render or incorrectly reuse DOM nodes and form inputs, causing UI glitches and severe performance degradation.
 2. **Q: What is "Lifting State Up" in React?**  
    *Answer*: When two or more sibling components need access to the same data (e.g., `<Header>` needing the cart count and `<QuotationTable>` needing the cart items), we "lift" the shared state up to their closest common ancestor (`<App />`). The ancestor manages the state and passes it down via props, along with callback functions to update it.
+
+---
+
+## Layer 5: Advanced React — Context API, Custom Hooks & Global State
+
+### 1. The Problem: "Prop Drilling"
+- In large applications, passing state and setter functions down through multiple levels of intermediate components (e.g., `App -> ProductGrid -> ProductCard`) creates tight coupling, boilerplate noise, and maintenance headaches. Intermediate components are forced to carry props they don't even use.
+
+### 2. The Solution: React Context API (The Global "Cloud")
+- **`createContext()`**: Creates a Context container.
+- **`Provider` Component**: Wraps the component tree and supplies the shared `value={{ state, actions }}` to all descendants.
+- **`useContext()`**: Consumes the context directly from any descendant component without touching intermediate parents.
+
+### 3. The Custom Hook Pattern (`useQuoteCart`)
+- Encapsulates `useContext(QuoteCartContext)` inside a friendly helper function.
+- Benefits:
+  1. Simplifies imports: components just call `useQuoteCart()` instead of importing both the Context object and `useContext`.
+  2. Built-in defensive assertions: throws a clear error if called outside the `<QuoteCartProvider>`.
+
+### 4. Interview Questions: Layer 5
+1. **Q: When should you use the React Context API versus external state libraries like Redux or Zustand?**  
+   *Answer*: Context API is built directly into React and is ideal for low-to-medium frequency global updates (e.g., theme toggle, user authentication session, or shopping cart state) without adding external library bundle weight. External state managers like Redux Toolkit or Zustand are preferred for high-frequency state updates (e.g., real-time collaborative canvas, complex financial trading feeds) where selective component re-rendering and fine-grained selector subscriptions are critical for performance.
+2. **Q: What causes components consuming a Context to re-render?**  
+   *Answer*: Whenever the `value` prop passed to `<Context.Provider value={...}>` changes by reference (`prevValue !== nextValue`), **every component that calls `useContext()` on that Context will automatically re-render**, even if wrapped in `React.memo()`. To prevent unnecessary re-renders in performance-sensitive contexts, we memoize the value object using `useMemo()` and callback functions using `useCallback()`.
