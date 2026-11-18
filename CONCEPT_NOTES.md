@@ -200,3 +200,64 @@ This living document contains detailed explanations, mental models, code snippet
    *Answer*: Both queues hold asynchronous callbacks waiting to run on the Call Stack. However, the Event Loop gives **higher priority to the Microtask Queue** (which handles Promises, `queueMicrotask`, and MutationObserver). All microtasks must be completely cleared before the Event Loop executes even one single macrotask (such as `setTimeout` or `setInterval`).
 2. **Q: Why does `await` not freeze the browser tab?**  
    *Answer*: `await` pauses the execution of only the *current `async` function*, temporarily yielding control back to the Event Loop. The JavaScript runtime continues processing other events, user scrolls, button clicks, and paint updates on the Call Stack. When the awaited Promise settles, the remainder of the async function is pushed to the Microtask Queue to resume execution seamlessly.
+
+---
+
+## Layer 4: React Fundamentals & Component Architecture
+
+### 1. What is React & The Virtual DOM?
+- **Concept**: React is a declarative, component-based library for building user interfaces.
+- **The Problem with Vanilla JS DOM Manipulation**: Direct DOM manipulation (`innerHTML`, `appendChild`) is slow, expensive, and error-prone when managing complex state across dozens of elements.
+- **How React Solves It (The Virtual DOM & Reconciliation)**:
+  1. When state changes, React creates a lightweight virtual JavaScript representation of the new UI tree.
+  2. React runs a **"Diffing Algorithm"** comparing the previous Virtual DOM snapshot with the new one.
+  3. React computes the minimal set of real DOM mutations needed and updates the browser DOM in a single batched operation.
+
+### 2. JSX (JavaScript XML) Rules
+- JSX is an extension that allows writing HTML-like markup inside JavaScript files.
+- **3 Fundamental Rules**:
+  1. Must return a **single root element** (or a Fragment `<> ... </>`).
+  2. Tags must be **explicitly closed** (e.g., `<input />`, `<br />`).
+  3. Attributes use **camelCase** (e.g., `className` instead of `class`, `htmlFor` instead of `for`, `onClick` instead of `onclick`).
+
+### 3. Props vs State (The Golden Distinction)
+
+| Concept | What It Is | Can It Be Mutated? | Ownership |
+| :--- | :--- | :--- | :--- |
+| **Props** | Inputs passed down from parent to child | ❌ Read-Only (Immutable) | Owned by the parent component |
+| **State** | Internal data that changes over time | ❌ Mutated directly; ✅ Updated via setter function | Owned and managed inside the component |
+
+### 4. The Core React Hooks
+
+#### `useState`
+```javascript
+const [quoteCart, setQuoteCart] = useState([]);
+```
+- Returns a 2-element array: `[currentValue, updaterFunction]`.
+- **Always update state immutably**:
+  ```javascript
+  // ❌ WRONG (Direct mutation):
+  quoteCart.push(newItem); setQuoteCart(quoteCart);
+  
+  // ✅ RIGHT (New array reference):
+  setQuoteCart(prev => [...prev, newItem]);
+  ```
+
+#### `useEffect`
+```javascript
+useEffect(() => {
+  // Side effect: runs after component paints on screen
+  loadProducts();
+}, []); // Empty dependency array: runs ONCE on mount
+```
+- Handles HTTP requests, event subscriptions, or timers.
+- The **Dependency Array**:
+  - `[]`: Runs once when component mounts.
+  - `[category]`: Runs when component mounts AND whenever `category` changes.
+  - Omitted: Runs after *every single render* (danger: infinite loops!).
+
+### 5. Interview Questions: Layer 4
+1. **Q: Why does React require a unique `key` prop when rendering lists with `.map()`?**  
+   *Answer*: During reconciliation, React's diffing algorithm uses the `key` to identify which items have changed, been added, or been removed. Without stable unique keys (or when using array indices on dynamic lists), React may re-render or incorrectly reuse DOM nodes and form inputs, causing UI glitches and severe performance degradation.
+2. **Q: What is "Lifting State Up" in React?**  
+   *Answer*: When two or more sibling components need access to the same data (e.g., `<Header>` needing the cart count and `<QuotationTable>` needing the cart items), we "lift" the shared state up to their closest common ancestor (`<App />`). The ancestor manages the state and passes it down via props, along with callback functions to update it.

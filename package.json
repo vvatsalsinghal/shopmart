@@ -4,7 +4,9 @@
   "description": "B2B Product Catalogue and Quotation Management System - Complete MERN Project",
   "private": true,
   "scripts": {
-    "dev": "npx --yes serve client -p 3000",
+    "dev": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "dev:vanilla": "npx --yes serve client/vanilla-version -p 3000",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

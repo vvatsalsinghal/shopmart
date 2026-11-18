@@ -1,0 +1,989 @@
+/* ==========================================================================
+   CSS CONCEPT: CSS Custom Properties (Design Tokens / Variables)
+   Defines reusable values across the entire stylesheet. If brand colors or 
+   spacing units change, update them here once and the entire app adapts.
+   ========================================================================== */
+:root {
+  /* Brand Palette */
+  --primary: #1e40af;          /* Deep royal blue: signifies trust & enterprise stability */
+  --primary-hover: #1d4ed8;    /* Lighter blue for interactive hover states */
+  --primary-light: #eff6ff;    /* Soft blue tint for subtle backgrounds & badges */
+  
+  --secondary: #0f766e;        /* Deep teal for secondary procurement actions */
+  --secondary-hover: #115e59;
+  
+  /* Feedback & Status Colors */
+  --success: #15803d;          /* In-stock green */
+  --success-bg: #dcfce7;
+  --warning: #b45309;          /* Procurement amber */
+  --warning-bg: #fef3c7;
+  --danger: #b91c1c;           /* Remove / destructive red */
+  --danger-bg: #fee2e2;
+  --info: #0369a1;
+  --info-bg: #e0f2fe;
+
+  /* Neutral Surface & Typography Colors */
+  --bg-page: #f8fafc;          /* Cool clean gray for page background */
+  --bg-surface: #ffffff;       /* Pure white for cards, panels, and tables */
+  --border-subtle: #e2e8f0;     /* Light gray border for separation */
+  --border-strong: #cbd5e1;
+  --text-main: #0f172a;        /* High-contrast dark slate for primary reading */
+  --text-muted: #64748b;       /* Subtle slate for secondary details, SKUs, labels */
+
+  /* Spacing Scale */
+  --space-xs: 0.25rem;  /* 4px */
+  --space-sm: 0.5rem;   /* 8px */
+  --space-md: 1rem;     /* 16px */
+  --space-lg: 1.5rem;   /* 24px */
+  --space-xl: 2rem;     /* 32px */
+
+  /* Structural Radii & Shadows */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  
+  --transition-fast: all 0.2s ease-in-out;
+}
+
+/* ==========================================================================
+   CSS CONCEPT: Box-Sizing & Reset
+   Ensures padding and borders are included within an element's total width/height,
+   preventing unexpected layout blowouts.
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessible focus outlines for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   CSS CONCEPT: Utility Layout Classes
+   ========================================================================== */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+}
+
+/* ==========================================================================
+   HEADER & NAVIGATION (Flexbox Layout)
+   CSS CONCEPT: Flexbox
+   Used for 1-dimensional distribution along a row (brand, search, and cart).
+   ========================================================================== */
+.app-header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 50; /* Keeps header floating above scrolling products */
+  box-shadow: var(--shadow-subtle);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-md);
+  flex-wrap: wrap; /* Wraps cleanly on narrow mobile viewports */
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.brand-icon {
+  font-size: 2rem;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.brand-title span {
+  color: var(--primary);
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Search Bar (Flexbox child expansion) */
+.search-form {
+  display: flex;
+  flex: 1 1 320px; /* Allows the search bar to grow and shrink responsively */
+  max-width: 520px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.6rem var(--space-md);
+  font-size: 0.875rem;
+  border: 1px solid var(--border-strong);
+  border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  transition: var(--transition-fast);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.btn-search {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0 var(--space-md);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: var(--transition-fast);
+}
+
+.btn-search:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Quotation Cart Button */
+.quote-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 0.5rem var(--space-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.quote-cart-btn:hover {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.badge-counter {
+  background-color: var(--primary);
+  color: #fff;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.quote-cart-btn:hover .badge-counter {
+  background-color: #fff;
+  color: var(--primary);
+}
+
+/* ==========================================================================
+   MAIN LAYOUT (Sidebar + Product Catalogue)
+   CSS CONCEPT: Responsive Flexbox/Grid Orchestration
+   On desktop: 2 columns (sidebar + content). On mobile: stacked single column.
+   ========================================================================== */
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+@media (min-width: 992px) {
+  .main-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .catalogue-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 5rem; /* Sticks comfortably beneath the floating header */
+  }
+
+  .catalogue-content {
+    flex: 1;
+    min-width: 0; /* Prevents flex children from overflowing */
+  }
+}
+
+/* Sidebar Styles */
+.sidebar-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-subtle);
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-sm);
+}
+
+.sidebar-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.filter-group {
+  margin-bottom: var(--space-lg);
+}
+
+.filter-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.55rem var(--space-sm);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  background-color: #fff;
+  color: var(--text-main);
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+.procurement-notice {
+  display: flex;
+  gap: var(--space-sm);
+  background-color: var(--info-bg);
+  border: 1px solid #bae6fd;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.8125rem;
+  color: var(--info);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   PRODUCT CATALOGUE (CSS GRID LAYOUT)
+   CSS CONCEPT: CSS Grid with auto-fill & minmax()
+   Automatically calculates how many columns fit based on card minimum width.
+   No manual breakpoint overrides required for cards!
+   ========================================================================== */
+.catalogue-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.section-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* Product Card Component */
+.product-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-fast);
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--border-strong);
+}
+
+.product-card-badge-container {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 10;
+}
+
+.product-image-placeholder {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  font-size: 2.25rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.product-image-placeholder span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.product-card-body {
+  padding: var(--space-md);
+  flex: 1; /* Pushes the card footer to the bottom evenly */
+  display: flex;
+  flex-direction: column;
+}
+
+.product-category-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+
+.product-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.3;
+  margin-bottom: var(--space-xs);
+}
+
+.product-sku {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-bottom: var(--space-sm);
+}
+
+.product-description {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: var(--space-md);
+  /* Truncate to 3 lines nicely */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: auto; /* Pins specs toward the bottom */
+}
+
+.spec-tag {
+  background-color: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.product-card-footer {
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-subtle);
+  background-color: #fafbfc;
+}
+
+.price-estimate {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-sm);
+}
+
+.price-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.price-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   BUTTONS & BADGES
+   CSS CONCEPT: Component-Level Encapsulation
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.55rem var(--space-md);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-lg {
+  padding: 0.8rem var(--space-lg);
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-hover);
+}
+
+.btn-danger {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid #fecaca;
+}
+
+.btn-danger:hover {
+  background-color: var(--danger);
+  color: #fff;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.badge-success {
+  background-color: var(--success-bg);
+  color: var(--success);
+  border: 1px solid #bbf7d0;
+}
+
+.badge-warning {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid #fde68a;
+}
+
+.badge-info {
+  background-color: var(--info-bg);
+  color: var(--info);
+  border: 1px solid #bae6fd;
+}
+
+/* ==========================================================================
+   QUOTATION REQUEST SECTION & DATA TABLE
+   CSS CONCEPT: Responsive Tables & Flexbox Grid Forms
+   ========================================================================== */
+.quotation-panel {
+  background-color: var(--bg-surface);
+  border-top: 2px solid var(--border-subtle);
+  border-bottom: 2px solid var(--border-subtle);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  margin-top: var(--space-xl);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.panel-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.panel-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Responsive Table */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.quote-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.quote-table th {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.quote-table td {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.table-product-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.qty-input {
+  width: 70px;
+  padding: 0.4rem;
+  text-align: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Quotation Form */
+.quote-submission-form {
+  background-color: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.form-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-xs);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.form-control {
+  margin-bottom: var(--space-md);
+}
+
+.form-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: var(--space-xs);
+}
+
+.required {
+  color: var(--danger);
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 0.6rem var(--space-sm);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-family: inherit;
+  background-color: #fff;
+  transition: var(--transition-fast);
+}
+
+.form-input:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .form-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.form-disclaimer {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  max-width: 650px;
+}
+
+/* ==========================================================================
+   ADMIN WORKFLOW PREVIEW SECTION
+   ========================================================================== */
+.admin-preview-section {
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+.admin-card {
+  background-color: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  border: 1px solid #334155;
+  box-shadow: var(--shadow-card);
+}
+
+.admin-badge {
+  display: inline-block;
+  background-color: #3b82f6;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.admin-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: var(--space-xs);
+}
+
+.admin-card p {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-md);
+}
+
+.admin-response-simulation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.admin-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  background-color: #1e293b;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.admin-input-tag {
+  background-color: #334155;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+}
+
+.eta-ready {
+  color: #4ade80;
+  border-left: 3px solid #22c55e;
+}
+
+.eta-procurement {
+  color: #facc15;
+  border-left: 3px solid #eab308;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.app-footer {
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+/* ==========================================================================
+   LAYER 3: ASYNCHRONOUS UI STATES (Loading Spinner, Errors & Confirmation)
+   CSS CONCEPT: CSS Keyframe Animations & Micro-Interactions
+   ========================================================================== */
+.loading-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-color: var(--bg-surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--border-subtle);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: var(--space-md);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: var(--space-xs);
+}
+
+.loading-subtext {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.error-banner {
+  grid-column: 1 / -1;
+  background-color: var(--danger-bg);
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--danger);
+}
+
+.error-banner h4 {
+  font-size: 1.1rem;
+  margin-bottom: var(--space-xs);
+}
+
+.error-banner p {
+  font-size: 0.875rem;
+  margin-bottom: var(--space-md);
+}
+
+.quotation-confirmation-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-top: var(--space-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid #334155;
+}
+
+.confirmation-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.confirmation-header h3 {
+  font-size: 1.25rem;
+  color: #4ade80;
+}
+
+.confirmation-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid #334155;
+}
+
+.confirmation-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.confirmation-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.confirmation-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.confirmation-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-top: var(--space-md);
+}
+
+.confirmation-items-table th {
+  text-align: left;
+  padding: var(--space-sm);
+  color: #94a3b8;
+  border-bottom: 1px solid #334155;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.confirmation-items-table td {
+  padding: var(--space-sm);
+  border-bottom: 1px solid #1e293b;
+}

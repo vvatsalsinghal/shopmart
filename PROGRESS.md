@@ -7,7 +7,7 @@
 
 ---
 
-## Current Active Layer: Layer 3 (Advanced Asynchronous JavaScript & HTTP APIs)
+## Current Active Layer: Layer 4 (React Fundamentals & Component Architecture)
 
 | Layer | Topic / Skill | Status | Date Started | Date Mastered |
 | :--- | :--- | :--- | :--- | :--- |
@@ -23,14 +23,14 @@
 | **Layer 2** | Array Methods (`map`, `filter`, `find`, `reduce`) | 🔵 Practiced | 2026-11-16 | - |
 | **Layer 2** | Destructuring & Spread/Rest Operators | 🔵 Practiced | 2026-11-16 | - |
 | **Layer 2** | ES Modules (`import` / `export`) | 🔵 Practiced | 2026-11-16 | - |
-| **Layer 3** | Call Stack, Event Loop & Web APIs | 🟡 Introduced | 2026-11-17 | - |
-| **Layer 3** | Promises & `async/await` Patterns | 🟡 Introduced | 2026-11-17 | - |
-| **Layer 3** | Fetch API & HTTP Protocol Fundamentals | 🟡 Introduced | 2026-11-17 | - |
-| **Layer 4** | React Components & JSX Rules | ⚪ Pending | - | - |
-| **Layer 4** | Props & Unidirectional Data Flow | ⚪ Pending | - | - |
-| **Layer 4** | `useState` & State Immutability | ⚪ Pending | - | - |
-| **Layer 4** | `useEffect` & Component Lifecycle | ⚪ Pending | - | - |
-| **Layer 4** | Controlled Forms & Event Handling | ⚪ Pending | - | - |
+| **Layer 3** | Call Stack, Event Loop & Web APIs | 🔵 Practiced | 2026-11-17 | - |
+| **Layer 3** | Promises & `async/await` Patterns | 🔵 Practiced | 2026-11-17 | - |
+| **Layer 3** | Fetch API & HTTP Protocol Fundamentals | 🔵 Practiced | 2026-11-17 | - |
+| **Layer 4** | React Components & JSX Rules | 🟡 Introduced | 2026-11-18 | - |
+| **Layer 4** | Props & Unidirectional Data Flow | 🟡 Introduced | 2026-11-18 | - |
+| **Layer 4** | `useState` & State Immutability | 🟡 Introduced | 2026-11-18 | - |
+| **Layer 4** | `useEffect` & Component Lifecycle | 🟡 Introduced | 2026-11-18 | - |
+| **Layer 4** | Controlled Forms & Event Handling | 🟡 Introduced | 2026-11-18 | - |
 | **Layer 4** | React Router Single-Page Navigation | ⚪ Pending | - | - |
 | **Layer 5** | React Context API (Auth & Quote Cart) | ⚪ Pending | - | - |
 | **Layer 5** | Custom Hooks Creation | ⚪ Pending | - | - |

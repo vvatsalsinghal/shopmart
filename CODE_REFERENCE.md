@@ -82,4 +82,23 @@ This reference catalogs every key function, hook, method, and library used throu
 
 ---
 
+## React Component & Hooks Reference
+
+### React Hooks
+| Hook | Signature | Purpose & Project Usage |
+| :--- | :--- | :--- |
+| `useState` | `const [state, setState] = useState(initial)` | Declares reactive state in `<App />` and `<QuotationForm />` |
+| `useEffect` | `useEffect(callback, dependencies)` | Triggers asynchronous catalogue loading on component mount in `<App />` |
+
+### Core React Architecture Patterns
+| Pattern | How It Works | Where Used in Project |
+| :--- | :--- | :--- |
+| **Component Decomposition** | Splitting monolithic pages into small, focused files | `<Header>`, `<Sidebar>`, `<ProductGrid>`, `<ProductCard>`, `<QuotationTable>` |
+| **Controlled Inputs** | React state drives the `<input value={...}>` and `onChange` | Search bar, category dropdown, customer details form |
+| **Lifting State Up** | Common state stored in parent and shared via props | `quoteCart` state stored in `<App />` and passed to `<Header>` & `<QuotationTable>` |
+| **List Rendering with Keys** | `array.map(item => <Component key={item.id} />)` | Rendering product cards in `<ProductGrid>` and line items in `<QuotationTable>` |
+| **Conditional Rendering** | `isLoading ? <Spinner /> : <Grid />` | Switching between loading spinner, error banner, and catalogue |
+
+---
+
 *(As we build through each layer, we will continually expand this dictionary with JavaScript array methods, React hooks, Express router methods, and Mongoose database operations!)*
