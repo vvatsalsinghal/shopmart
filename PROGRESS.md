@@ -34,9 +34,9 @@
 | **Layer 4** | React Router Single-Page Navigation | ⚪ Pending | - | - |
 | **Layer 5** | React Context API (Auth & Quote Cart) | 🟡 Introduced | 2026-11-19 | - |
 | **Layer 5** | Custom Hooks Creation (`useQuoteCart`) | 🟡 Introduced | 2026-11-19 | - |
-| **Layer 5** | Reusable UI Component Systems | 🟡 Introduced | 2026-11-19 | - |
-| **Layer 6** | Node.js Architecture (libuv, V8) | ⚪ Pending | - | - |
-| **Layer 6** | Environment Variables with `dotenv` | ⚪ Pending | - | - |
+| **Layer 5** | Reusable UI Component Systems | 🔵 Practiced | 2026-11-19 | - |
+| **Layer 6** | Node.js Architecture (libuv, V8) | 🟡 Introduced | 2026-11-19 | - |
+| **Layer 6** | Environment Variables with `dotenv` | 🟡 Introduced | 2026-11-19 | - |
 | **Layer 7** | Express.js Server & Application Architecture | ⚪ Pending | - | - |
 | **Layer 7** | RESTful Routing & HTTP Status Codes | ⚪ Pending | - | - |
 | **Layer 7** | Middleware Pipeline & Error Handling | ⚪ Pending | - | - |

@@ -93,6 +93,26 @@ This reference catalogs every key function, hook, method, and library used throu
 | `useContext` | `const value = useContext(Context)` | Consumes global Context values inside custom hooks |
 | `useQuoteCart` | `const { quoteCart, addToQuote } = useQuoteCart()` | Custom Hook providing direct cart access to any component |
 
+---
+
+## Node.js Server & Runtime Operations
+
+### Core Node.js Modules
+| Module | Prefix / Import | Purpose & Project Usage |
+| :--- | :--- | :--- |
+| `node:http` | `import http from 'node:http'` | Creates the low-level event-driven HTTP server in `server.js` |
+| `node:os` | `import os from 'node:os'` | Retrieves hardware diagnostics (CPUs, architecture, free memory) in `/api/health` |
+| `node:path` | `import path from 'node:path'` | Cross-platform filesystem directory path manipulation |
+| `dotenv` | `import 'dotenv/config'` | Injects key-value pairs from `.env` into `process.env` |
+
+### Node.js Process API
+| Property / Method | Purpose & Project Usage |
+| :--- | :--- |
+| `process.env` | Accesses injected environment variables (`PORT`, `NODE_ENV`, `CLIENT_ORIGIN`) |
+| `process.version` | Inspects the active Node.js engine version (`v24.19.0`) |
+| `process.pid` | Process ID assigned by the OS kernel |
+| `process.on('SIGINT', ...)` | Intercepts Ctrl+C shutdown signal to close network sockets gracefully |
+
 ### Core React Architecture Patterns
 | Pattern | How It Works | Where Used in Project |
 | :--- | :--- | :--- |

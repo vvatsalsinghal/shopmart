@@ -285,3 +285,46 @@ useEffect(() => {
    *Answer*: Context API is built directly into React and is ideal for low-to-medium frequency global updates (e.g., theme toggle, user authentication session, or shopping cart state) without adding external library bundle weight. External state managers like Redux Toolkit or Zustand are preferred for high-frequency state updates (e.g., real-time collaborative canvas, complex financial trading feeds) where selective component re-rendering and fine-grained selector subscriptions are critical for performance.
 2. **Q: What causes components consuming a Context to re-render?**  
    *Answer*: Whenever the `value` prop passed to `<Context.Provider value={...}>` changes by reference (`prevValue !== nextValue`), **every component that calls `useContext()` on that Context will automatically re-render**, even if wrapped in `React.memo()`. To prevent unnecessary re-renders in performance-sensitive contexts, we memoize the value object using `useMemo()` and callback functions using `useCallback()`.
+
+---
+
+## Layer 6: Node.js Runtime & Server Architecture
+
+### 1. What is Node.js? (V8 + libuv)
+- **Concept**: Node.js is an open-source, cross-platform JavaScript runtime environment that executes JavaScript code outside a web browser.
+- **The Architecture**:
+  1. **V8 Engine (Google)**: Compiles and executes JavaScript into native machine code at lightning speed.
+  2. **libuv (C++ Library)**: A multi-platform support library providing an event-driven asynchronous I/O model (managing the thread pool, filesystem, DNS, and network sockets).
+  3. **Node Core APIs**: JavaScript abstractions (`http`, `fs`, `path`, `os`, `crypto`) bridging JS to the C++ core.
+
+### 2. Browser vs Node.js Environment Comparison
+| Feature | Browser Environment | Node.js Environment |
+| :--- | :--- | :--- |
+| **Global Object** | `window` | `global` or `globalThis` |
+| **DOM & UI** | Has `document`, HTML elements, CSSOM | ❌ No DOM, no window, no screen |
+| **Filesystem Access** | ❌ Blocked by browser security sandbox | ✅ Full access to read/write disk files (`fs`) |
+| **Process Control** | ❌ None | ✅ Access to `process.env`, `process.exit`, OS signals |
+| **Networking** | Can make outbound requests (`fetch`) | Can listen as a server on a port (`http.listen`) |
+
+### 3. Environment Variables & Security (`dotenv`)
+- **Concept**: Configuration settings that change depending on the environment (development, staging, production) must never be hardcoded into source files.
+- **Best Practice**:
+  - Keep secrets in a local `.env` file (ignored by `.gitignore`).
+  - Provide a `.env.example` template for other developers.
+  - Load into memory at application boot using `import 'dotenv/config'`.
+  - Access via `process.env.VARIABLE_NAME`.
+
+### 4. Process Lifecycle & Graceful Shutdown
+- In production, server crashes or termination signals (`SIGINT` from Ctrl+C or `SIGTERM` from cloud orchestrators like Docker/Kubernetes) must be intercepted:
+  ```javascript
+  process.on('SIGINT', () => {
+    server.close(() => process.exit(0));
+  });
+  ```
+- This ensures in-flight database writes and open HTTP connections finish cleanly rather than corrupting data.
+
+### 5. Interview Questions: Layer 6
+1. **Q: Is Node.js truly single-threaded? How does it handle heavy operations like file reading or cryptography?**  
+   *Answer*: JavaScript execution on the Call Stack in Node.js is strictly single-threaded. However, the underlying C++ library (**libuv**) maintains a background **Thread Pool** (defaulting to 4 worker threads, configurable via `UV_THREADPOOL_SIZE`). Heavy, blocking operations (like file system I/O, DNS lookups, compression, and cryptographic hashing) are automatically offloaded to this thread pool, keeping the main JavaScript thread completely free to handle thousands of concurrent network connections.
+2. **Q: What is the purpose of `process.env` in Node.js?**  
+   *Answer*: `process.env` is a global object provided by the Node.js runtime that exposes the user environment configuration. It allows developers to inject dynamic configuration (e.g., database connection strings, secret JWT encryption keys, and port numbers) without modifying or committing secrets into source code, which is essential for following the 12-Factor App methodology.
