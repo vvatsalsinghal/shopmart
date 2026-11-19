@@ -328,3 +328,57 @@ useEffect(() => {
    *Answer*: JavaScript execution on the Call Stack in Node.js is strictly single-threaded. However, the underlying C++ library (**libuv**) maintains a background **Thread Pool** (defaulting to 4 worker threads, configurable via `UV_THREADPOOL_SIZE`). Heavy, blocking operations (like file system I/O, DNS lookups, compression, and cryptographic hashing) are automatically offloaded to this thread pool, keeping the main JavaScript thread completely free to handle thousands of concurrent network connections.
 2. **Q: What is the purpose of `process.env` in Node.js?**  
    *Answer*: `process.env` is a global object provided by the Node.js runtime that exposes the user environment configuration. It allows developers to inject dynamic configuration (e.g., database connection strings, secret JWT encryption keys, and port numbers) without modifying or committing secrets into source code, which is essential for following the 12-Factor App methodology.
+
+---
+
+## Layer 7: Express.js REST API Server Architecture
+
+### 1. What is Express.js & Why Do We Use It?
+- **Concept**: Express is a fast, unopinionated, minimalist web framework for Node.js.
+- **Why it replaces raw `node:http`**:
+  - Raw Node requires manual URL parsing, messy `if/else` statements for methods, manual header configuration, and complex stream chunk buffering to read JSON request bodies.
+  - Express provides elegant routing (`router.get`, `router.post`), middleware support (`app.use`), and built-in JSON parsing (`express.json()`).
+
+### 2. The Express Request-Response Cycle & Middleware Pipeline
+```
+Incoming Client Request
+          │
+          ▼
+1. CORS Middleware: Checks if origin (e.g. localhost:5173) is allowed
+          │
+          ▼
+2. express.json() Middleware: Buffers stream and parses raw body into req.body
+          │
+          ▼
+3. Request Logger: Logs "[TIMESTAMP] METHOD URL" to console
+          │
+          ▼
+4. Router (productRoutes / quotationRoutes): Matches URL pattern
+          │
+          ▼
+5. Controller Function: Executes business logic and sends res.status(200).json(...)
+          │
+      (If an error is thrown -> next(err))
+          ▼
+6. Centralized Error Handler: (err, req, res, next) catches error and sends clean 500 JSON
+```
+
+### 3. How Data Arrives at the Server: `req.params`, `req.query`, `req.body`
+| Property | Where It Comes From | Example URL / Request | Used in Project For |
+| :--- | :--- | :--- | :--- |
+| **`req.params`** | Route path parameters (`:id`) | `/api/products/prod-001` | Grabbing specific product or quotation by ID |
+| **`req.query`** | URL Query string (`?key=val`) | `/api/products?category=safety&search=glove` | Filtering and searching the catalogue |
+| **`req.body`** | HTTP request body (JSON payload) | `POST /api/quotations` with JSON payload | Submitting company details and quote items |
+
+### 4. HTTP Status Codes in REST APIs
+- `200 OK`: Successful data retrieval (`GET /api/products`).
+- `201 Created`: Resource successfully created (`POST /api/quotations`).
+- `400 Bad Request`: Client validation failure (e.g., missing company name or empty items).
+- `404 Not Found`: Target resource does not exist.
+- `500 Internal Server Error`: Server exception or unhandled database error.
+
+### 5. Interview Questions: Layer 7
+1. **Q: What is middleware in Express.js, and why is `next()` important?**  
+   *Answer*: Middleware functions are functions that have access to the request object (`req`), the response object (`res`), and the `next` function in the application's request-response cycle. They can execute code, make changes to `req` and `res`, and end the cycle. If a middleware does not call `next()` or send a response (`res.json()`), the request will be left hanging and the client will timeout.
+2. **Q: How does Express recognize an Error-Handling middleware?**  
+   *Answer*: Express specifically inspects the function's arity (number of declared arguments). Normal middleware functions accept 2 or 3 parameters (`req, res` or `req, res, next`). An error-handling middleware **must declare exactly 4 parameters: `(err, req, res, next)`**. Express automatically skips all standard middleware and jumps straight to the 4-parameter error handler whenever `next(err)` is called or an error is thrown.

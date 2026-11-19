@@ -1,151 +1,131 @@
 // =============================================================================
 // FILE: server/server.js
-// PURPOSE: Node.js Backend Server Entry Point (Layer 6 Foundation).
-// DEMONSTRATES: Node.js Runtime, V8 Engine, Operating System Integration,
-//               Environment Variables (process.env), Native HTTP Server,
-//               Process Lifecycle & Graceful Shutdown.
-// In Layer 7, we will expand this with Express.js routing and middleware!
+// PURPOSE: Express.js REST API Server Entry Point (Layer 7).
+// DEMONSTRATES: Express Application, Middleware Pipeline, Router Mounts,
+//               Centralized Error Handling, CORS Configuration.
 // =============================================================================
 
-// NODE.JS CONCEPT: Built-in Core Modules
-// Node.js comes with built-in C++ backed modules prefixed with "node:".
-// They require ZERO npm installation!
-import http from 'node:http';
+import express from 'express';
+import cors from 'cors';
 import os from 'node:os';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-// NODE.JS CONCEPT: Environment Variables with dotenv
-// Reads key-value pairs from .env and injects them into the global "process.env" object.
-// SECURITY CONCEPT: Never hardcode sensitive ports, passwords, or API keys in source code!
 import 'dotenv/config';
 
-// NODE.JS CONCEPT: ES Modules Directory Path Resolution
-// In older CommonJS, __dirname existed automatically.
-// In modern ES Modules ("type": "module"), we generate __dirname using fileURLToPath:
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Import Modular Route Handlers
+import productRoutes from './src/routes/productRoutes.js';
+import quotationRoutes from './src/routes/quotationRoutes.js';
+import { notFound, errorHandler } from './src/middleware/errorHandler.js';
 
 // =============================================================================
-// SERVER CONFIGURATION
-// Reads from process.env with fallback defaults
+// EXPRESS CONCEPT: Initializing the Express Application
+// express() creates an Express application object containing routing methods
+// (app.get, app.post) and the middleware pipeline (app.use).
 // =============================================================================
+const app = express();
+
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const APP_NAME = process.env.APP_NAME || 'ShopMart Server';
+const APP_NAME = process.env.APP_NAME || 'ShopMart Express API Server';
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 
 // =============================================================================
-// NODE.JS CONCEPT: The Native HTTP Server
-// http.createServer() creates an event-driven server.
-// Every time a browser or client makes a request, the callback function executes,
-// receiving two objects:
-//   1. req (http.IncomingMessage): What the client asked for (URL, Method, Headers).
-//   2. res (http.ServerResponse): What the server sends back (Status Code, Data).
+// EXPRESS CONCEPT: Middleware Pipeline
+// Middleware functions execute sequentially during the request-response cycle.
+// They can inspect requests, transform data, or reject unauthorized calls.
 // =============================================================================
-const server = http.createServer((req, res) => {
-  const { method, url } = req;
+
+// 1. CORS Middleware: Automatically configures cross-origin security headers
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+);
+
+// 2. Body Parser Middleware: Parses incoming JSON request payloads into req.body
+// EXPRESS CONCEPT: express.json()
+// Without this line, req.body is undefined when a client sends POST JSON!
+app.use(express.json());
+
+// 3. Custom Request Logger Middleware
+app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
-
-  console.log(`📡 [${timestamp}] Incoming Request: ${method} ${url}`);
-
-  // SECURITY & API CONCEPT: CORS Headers (Cross-Origin Resource Sharing)
-  // Tells the browser: "Allow our React app running on port 5173 to read this response!"
-  res.setHeader('Access-Control-Allow-Origin', CLIENT_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  // Handle pre-flight browser security checks (OPTIONS request)
-  if (method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
-  // Set response format to JSON
-  res.setHeader('Content-Type', 'application/json');
-
-  // ===========================================================================
-  // ROUTE 1: GET /api/health
-  // PURPOSE: Health check endpoint verifying that the backend server is alive.
-  // ===========================================================================
-  if (url === '/api/health' && method === 'GET') {
-    const healthData = {
-      status: 'UP',
-      appName: APP_NAME,
-      environment: NODE_ENV,
-      serverTime: timestamp,
-      uptimeSeconds: Math.floor(process.uptime()),
-      nodeVersion: process.version,
-      platform: `${os.type()} (${os.arch()})`,
-      freeMemoryMB: Math.floor(os.freemem() / (1024 * 1024)),
-      totalMemoryMB: Math.floor(os.totalmem() / (1024 * 1024))
-    };
-
-    // HTTP STATUS CODE 200: OK
-    res.writeHead(200);
-    res.end(JSON.stringify(healthData, null, 2));
-    return;
-  }
-
-  // ===========================================================================
-  // ROUTE 2: GET /api/info
-  // PURPOSE: Returns server runtime metadata.
-  // ===========================================================================
-  if (url === '/api/info' && method === 'GET') {
-    const infoData = {
-      message: 'Welcome to ShopMart B2B Quotation Management API',
-      version: '1.0.0 (Layer 6: Node.js Runtime)',
-      availableEndpoints: [
-        'GET /api/health - Server health and hardware diagnostics',
-        'GET /api/info   - Server API information'
-      ]
-    };
-
-    res.writeHead(200);
-    res.end(JSON.stringify(infoData, null, 2));
-    return;
-  }
-
-  // ===========================================================================
-  // ROUTE 3: 404 Not Found (Fallback for unhandled URLs)
-  // ===========================================================================
-  res.writeHead(404);
-  res.end(JSON.stringify({
-    error: 'Not Found',
-    message: `Cannot ${method} ${url}`,
-    statusCode: 404
-  }, null, 2));
+  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl}`);
+  // EXPRESS CONCEPT: next()
+  // Must call next() to pass execution to the next middleware or route handler!
+  next();
 });
 
 // =============================================================================
-// NODE.JS CONCEPT: Starting the Server with server.listen()
-// Tells the operating system: "Reserve port PORT for this Node.js process
-// and start listening for incoming network traffic!"
+// ROUTE MOUNTING (REST API Endpoints)
 // =============================================================================
-server.listen(PORT, () => {
+
+// Health Check Route: Live hardware & uptime diagnostics
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'UP',
+    appName: APP_NAME,
+    environment: NODE_ENV,
+    serverTime: new Date().toISOString(),
+    uptimeSeconds: Math.floor(process.uptime()),
+    nodeVersion: process.version,
+    platform: `${os.type()} (${os.arch()})`,
+    freeMemoryMB: Math.floor(os.freemem() / (1024 * 1024)),
+    totalMemoryMB: Math.floor(os.totalmem() / (1024 * 1024))
+  });
+});
+
+// API Directory Route
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    message: 'Welcome to ShopMart B2B Quotations Express REST API',
+    version: '2.0.0 (Layer 7: Express Architecture)',
+    endpoints: {
+      health: 'GET /api/health',
+      products: 'GET /api/products, GET /api/products/:id',
+      quotations: 'POST /api/quotations, GET /api/quotations, PATCH /api/quotations/:id/status'
+    }
+  });
+});
+
+// EXPRESS CONCEPT: Router Mounting
+// All routes inside productRoutes are prefixed with /api/products
+app.use('/api/products', productRoutes);
+
+// All routes inside quotationRoutes are prefixed with /api/quotations
+app.use('/api/quotations', quotationRoutes);
+
+// =============================================================================
+// ERROR HANDLING MIDDLEWARE PIPELINE
+// Placed at the very bottom so they catch unmatched routes and controller errors!
+// =============================================================================
+
+// 404 Handler for undefined routes
+app.use(notFound);
+
+// Centralized Error Handler (Catches any error passed to next(err))
+app.use(errorHandler);
+
+// =============================================================================
+// SERVER LISTENER
+// =============================================================================
+const server = app.listen(PORT, () => {
   console.log('================================================================');
-  console.log(`🚀 ${APP_NAME} IS RUNNING`);
-  console.log(`🌐 Local Server URL:  http://localhost:${PORT}`);
-  console.log(`🏥 Health Check API:   http://localhost:${PORT}/api/health`);
-  console.log(`ℹ️  Server Info API:   http://localhost:${PORT}/api/info`);
-  console.log(`💻 Node.js Version:   ${process.version} (PID: ${process.pid})`);
-  console.log(`🖥️  Operating System:  ${os.type()} ${os.release()} (${os.arch()})`);
-  console.log(`🧠 System Memory:     ${Math.floor(os.freemem() / (1024 * 1024))} MB free / ${Math.floor(os.totalmem() / (1024 * 1024))} MB total`);
-  console.log(`⚙️  Environment Mode:  ${NODE_ENV}`);
-  console.log(`🔒 Allowed Client:    ${CLIENT_ORIGIN}`);
+  console.log(`🚀 ${APP_NAME} IS RUNNING (Express 4)`);
+  console.log(`🌐 Local URL:         http://localhost:${PORT}`);
+  console.log(`🏥 Health Check API:  http://localhost:${PORT}/api/health`);
+  console.log(`📦 Products API:      http://localhost:${PORT}/api/products`);
+  console.log(`📋 Quotations API:    http://localhost:${PORT}/api/quotations`);
+  console.log(`⚙️  Environment Mode: ${NODE_ENV}`);
+  console.log(`🔒 Allowed Client:   ${CLIENT_ORIGIN}`);
   console.log('================================================================');
 });
 
-// =============================================================================
-// NODE.JS CONCEPT: Process Lifecycle & Graceful Shutdown
-// Listens for operating system interrupt signals (SIGINT = Ctrl + C).
-// Ensures active network connections close cleanly before Node terminates.
-// =============================================================================
+// Graceful Shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 SIGINT signal received: Closing ShopMart server gracefully...');
+  console.log('\n🛑 SIGINT received: Closing Express server gracefully...');
   server.close(() => {
-    console.log('✅ All network listeners closed. Node process terminated cleanly.');
+    console.log('✅ Express server closed. Process terminated cleanly.');
     process.exit(0);
   });
 });

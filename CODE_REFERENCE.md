@@ -124,4 +124,37 @@ This reference catalogs every key function, hook, method, and library used throu
 
 ---
 
+## Express.js REST API & Routing Operations
+
+### Express Application & Router Methods
+| Method / Function | Signature | Purpose & Project Usage |
+| :--- | :--- | :--- |
+| `express()` | `const app = express()` | Instantiates an Express HTTP web application server |
+| `express.Router()` | `const router = express.Router()` | Creates modular, mountable mini-router pipelines for isolated resource endpoints |
+| `app.use(path, router)` | `app.use('/api/products', productRouter)` | Mounts a router or middleware function at the specified base path |
+| `express.json()` | `app.use(express.json())` | Built-in middleware that parses incoming JSON request bodies into `req.body` |
+| `cors(options)` | `app.use(cors({ origin: ... }))` | Middleware enabling Cross-Origin Resource Sharing for browser security compliance |
+| `router.get(path, handler)` | `router.get('/', getProducts)` | Registers a route handler for incoming HTTP `GET` requests |
+| `router.post(path, handler)` | `router.post('/', createQuotation)` | Registers a route handler for incoming HTTP `POST` requests |
+| `router.patch(path, handler)` | `router.patch('/:id/status', updateQuotationStatus)` | Registers a route handler for partial updates via HTTP `PATCH` |
+
+### Express Request & Response Objects
+| Property / Method | Signature | Purpose & Project Usage |
+| :--- | :--- | :--- |
+| `req.params` | `const { id } = req.params` | Extracts route path variables (e.g., `/api/products/:id` -> `req.params.id`) |
+| `req.query` | `const { category, search } = req.query` | Extracts URL query parameters (e.g., `/api/products?category=Industrial`) |
+| `req.body` | `const { items, customer } = req.body` | Contains parsed payload data sent by clients in POST/PUT/PATCH requests |
+| `res.status(code)` | `res.status(200)` | Sets the HTTP response status code (e.g., 200 OK, 201 Created, 400 Bad Request, 404 Not Found) |
+| `res.json(data)` | `res.json({ success: true, data })` | Serializes JavaScript objects to JSON and sets the `Content-Type: application/json` header |
+| `next(err)` | `next(error)` | Passes control to the next registered middleware function or centralized error handler |
+
+### Express Middleware Patterns
+| Middleware Pattern | Signature | Purpose & Where Used in Project |
+| :--- | :--- | :--- |
+| **Logger Middleware** | `(req, res, next) => { ... next(); }` | Intercepts requests, logs method/URL/timestamp, and forwards execution |
+| **404 Fallback Handler** | `notFound(req, res, next)` | Catches unhandled routes, constructs an Error with status 404, passes to `next(error)` |
+| **Centralized Error Handler** | `errorHandler(err, req, res, next)` | 4-argument Express error handler intercepting all application exceptions and sending uniform JSON errors |
+
+---
+
 *(As we build through each layer, we will continually expand this dictionary with JavaScript array methods, React hooks, Express router methods, and Mongoose database operations!)*
