@@ -7,7 +7,7 @@
 
 ---
 
-## Current Active Layer: Layer 9 (Full-Stack Integration: Connecting React to Express & MongoDB)
+## Current Active Layer: Layer 9 Complete / Layer 10 (Authentication & Authorization / Admin RBAC)
 
 | Layer | Topic / Skill | Status | Date Started | Date Mastered |
 | :--- | :--- | :--- | :--- | :--- |
@@ -40,10 +40,14 @@
 | **Layer 7** | Express.js Server & Application Architecture | 🔵 Practiced | 2026-11-19 | - |
 | **Layer 7** | RESTful Routing & HTTP Status Codes | 🔵 Practiced | 2026-11-19 | - |
 | **Layer 7** | Middleware Pipeline & Error Handling | 🔵 Practiced | 2026-11-19 | - |
-| **Layer 8** | MongoDB Atlas & NoSQL Document Principles | 🔵 Practiced | 2026-11-22 | - |
-| **Layer 8** | Mongoose Schema Design & Validations | 🔵 Practiced | 2026-11-22 | - |
-| **Layer 8** | Document Seeding, CRUD & Queries | 🔵 Practiced | 2026-11-22 | - |
-| **Layer 9** | Full-Stack Integration & CORS Configuration | 🟡 Introduced | 2026-11-22 | - |
+| **Layer 8** | MongoDB Atlas & NoSQL Document Principles | 🔵 Practiced | 2026-11-22 | 2026-11-22 |
+| **Layer 8** | Mongoose Schema Design & Validations | 🔵 Practiced | 2026-11-22 | 2026-11-22 |
+| **Layer 8** | Document Seeding, CRUD & Queries | 🔵 Practiced | 2026-11-22 | 2026-11-22 |
+| **Layer 9** | Full-Stack Integration & CORS Configuration | 🔵 Practiced | 2026-11-22 | 2026-11-22 |
+| **Layer 9** | Live API Service Layer & Async Network States | 🔵 Practiced | 2026-11-22 | 2026-11-22 |
+| **Layer 10** | Password Hashing with `bcrypt` | ⚪ Pending | - | - |
+| **Layer 10** | JWT Authentication & Authorization Flow | ⚪ Pending | - | - |
+| **Layer 10** | Protected Routes & Role-Based Access Control | ⚪ Pending | - | - |
 | **Layer 9** | API Service Layer & Async UI States | ⚪ Pending | - | - |
 | **Layer 10** | Password Hashing with `bcrypt` | ⚪ Pending | - | - |
 | **Layer 10** | JWT Authentication & Authorization Flow | ⚪ Pending | - | - |

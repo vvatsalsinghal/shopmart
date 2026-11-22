@@ -1,59 +1,102 @@
 // =============================================================================
 // FILE: client/src/services/apiService.js
-// PURPOSE: Asynchronous API Service for React Components.
-// DEMONSTRATES: Promises, async/await, REST payload simulation.
+// PURPOSE: Full-Stack Client HTTP Service (Layer 9 Integration).
+// ARCHITECTURAL CONCEPT: REST API Client
+// Connects React on http://localhost:5173 to Express + MongoDB on http://localhost:5000!
 // =============================================================================
 
-import { initialProducts } from '../data/productsData.js';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+/**
+ * fetchProductsApi:
+ * Makes a real HTTP GET request to our Express backend: /api/products
+ * Queries live catalogue documents stored in MongoDB Atlas!
+ *
+ * @param {Object} filters - Optional { search, category, inStock }
+ * @returns {Promise<Array>} Array of product documents
+ */
+export async function fetchProductsApi(filters = {}) {
+  try {
+    let url = `${API_BASE_URL}/api/products`;
+    const params = new URLSearchParams();
 
-export async function fetchProductsApi() {
-  console.log("📡 [React API Service: GET /api/products] Requesting catalogue...");
-  await delay(500); // 500ms network round-trip simulation
-  return JSON.parse(JSON.stringify(initialProducts));
+    if (filters.search) params.append('search', filters.search);
+    if (filters.category && filters.category !== 'all') params.append('category', filters.category);
+    if (filters.inStock !== undefined && filters.inStock !== null) {
+      params.append('inStock', String(filters.inStock));
+    }
+
+    if ([...params].length > 0) {
+      url += `?${params.toString()}`;
+    }
+
+    console.log(`🌐 [Full-Stack Fetch] GET -> ${url}`);
+
+    // HTTP CONCEPT: Native Browser fetch()
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || `HTTP ${response.status}: Failed to load products.`);
+    }
+
+    console.log(`✅ [Full-Stack Success] Received ${result.count} products from MongoDB Atlas!`);
+    return result.data;
+  } catch (error) {
+    console.error('❌ [API Service Error] fetchProductsApi failed:', error.message);
+    throw error;
+  }
 }
 
+/**
+ * submitQuotationApi:
+ * Makes a real HTTP POST request to our Express backend: /api/quotations
+ * Permanently saves the quotation into MongoDB Atlas!
+ *
+ * @param {Object} quotationPayload - { customer, items, specialInstructions }
+ * @returns {Promise<Object>} Processed quotation details including quote ID and ETAs
+ */
 export async function submitQuotationApi(quotationPayload) {
-  console.log("📡 [React API Service: POST /api/quotations] Submitting enquiry...");
-  await delay(800);
+  try {
+    const url = `${API_BASE_URL}/api/quotations`;
+    console.log(`🌐 [Full-Stack Submit] POST -> ${url}`, quotationPayload);
 
-  if (!quotationPayload.items || quotationPayload.items.length === 0) {
-    throw new Error("HTTP 400: At least one product is required for quotation.");
-  }
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(quotationPayload)
+    });
 
-  const quotationId = "QUOTE-" + Math.floor(100000 + Math.random() * 900000);
-  const now = new Date();
+    const result = await response.json();
 
-  const processedItems = quotationPayload.items.map((item) => {
-    const isReadyInStock = item.inStock ?? true;
-    const arrivalDate = new Date(now);
-    arrivalDate.setDate(now.getDate() + (isReadyInStock ? 3 : 18));
+    if (!response.ok) {
+      throw new Error(result.message || `HTTP ${response.status}: Quotation submission failed.`);
+    }
 
+    const savedQuote = result.data;
+    console.log(`🎉 [Quotation Persisted in Atlas] ID: ${savedQuote.quotationId}`);
+
+    // Normalize response for frontend UI (<ConfirmationCard />)
     return {
-      productId: item.productId,
-      title: item.title,
-      sku: item.sku,
-      quantity: item.quantity,
-      customerNote: item.customerNote,
-      quotedUnitPrice: Number((item.cataloguePriceEstimate * 0.95).toFixed(2)),
-      estimatedArrivalDate: arrivalDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric"
-      }),
-      procurementRoute: isReadyInStock ? "Warehouse Express Dispatch" : "Factory Direct Sourcing"
+      success: true,
+      quotationId: savedQuote.quotationId,
+      status: savedQuote.status,
+      customer: savedQuote.customer,
+      processedItems: savedQuote.items,
+      totalQuotationValue: savedQuote.totalQuotationValue,
+      message: result.message
     };
-  });
-
-  return {
-    success: true,
-    statusCode: 201,
-    quotationId,
-    status: "ENQUIRY_RECEIVED_PENDING_APPROVAL",
-    submittedAt: now.toISOString(),
-    customer: quotationPayload.customer,
-    processedItems,
-    message: `Quotation ${quotationId} registered successfully.`
-  };
+  } catch (error) {
+    console.error('❌ [API Service Error] submitQuotationApi failed:', error.message);
+    throw error;
+  }
 }
