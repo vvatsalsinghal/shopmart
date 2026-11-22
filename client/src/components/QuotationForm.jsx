@@ -33,9 +33,9 @@ export default function QuotationForm({ onQuotationSuccess }) {
         companyName: companyName.trim(),
         email: email.trim(),
         phone: phone.trim(),
-        desiredDeliveryDate,
-        specialInstructions: additionalNotes.trim()
+        desiredDeliveryDate
       },
+      specialInstructions: additionalNotes.trim(),
       items: quoteCart.map((item) => ({
         productId: item.productId,
         title: item.product.title,

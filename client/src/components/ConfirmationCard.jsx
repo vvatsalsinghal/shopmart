@@ -9,7 +9,7 @@ import React from 'react';
 export default function ConfirmationCard({ confirmation }) {
   if (!confirmation) return null;
 
-  const { quotationId, customer, processedItems, message } = confirmation;
+  const { quotationId, customer, processedItems, message, specialInstructions, totalQuotationValue } = confirmation;
 
   return (
     <div className="quotation-confirmation-card">
@@ -35,6 +35,13 @@ export default function ConfirmationCard({ confirmation }) {
           <span className="confirmation-value" style={{ color: '#facc15' }}>Pending Sales Approval</span>
         </div>
       </div>
+
+      {specialInstructions && (
+        <div style={{ marginTop: '0.85rem', padding: '0.75rem 1rem', background: '#0f172a', borderRadius: '6px', borderLeft: '3px solid #38bdf8', fontSize: '0.875rem' }}>
+          <strong style={{ color: '#94a3b8' }}>Special Instructions: </strong>
+          <span style={{ color: '#f1f5f9' }}>{specialInstructions}</span>
+        </div>
+      )}
 
       <h4 style={{ fontSize: '0.95rem', marginTop: '1rem', color: '#cbd5e1' }}>
         Itemized Price & Delivery Schedule (Admin Response):

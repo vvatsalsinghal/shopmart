@@ -93,6 +93,7 @@ export async function submitQuotationApi(quotationPayload) {
       customer: savedQuote.customer,
       processedItems: savedQuote.items,
       totalQuotationValue: savedQuote.totalQuotationValue,
+      specialInstructions: savedQuote.specialInstructions,
       message: result.message
     };
   } catch (error) {

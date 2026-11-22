@@ -74,6 +74,9 @@ export const createQuotation = async (req, res, next) => {
       processedItems.reduce((sum, item) => sum + item.lineItemTotal, 0).toFixed(2)
     );
 
+    // Extract special instructions from top level or inside customer object
+    const instructions = (specialInstructions || (customer && customer.specialInstructions) || "").trim();
+
     // MONGOOSE CONCEPT: Quotation.create()
     // Permanently persists the quotation document into MongoDB Atlas!
     const newQuotation = await Quotation.create({
@@ -87,7 +90,7 @@ export const createQuotation = async (req, res, next) => {
       },
       items: processedItems,
       totalQuotationValue,
-      specialInstructions: specialInstructions || ""
+      specialInstructions: instructions
     });
 
     console.log(`✅ [MongoDB Saved] Quotation ID: ${quotationId} for ${customer.companyName} ($${totalQuotationValue})`);
