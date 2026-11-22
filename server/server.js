@@ -84,6 +84,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Root Route: API Directory & Welcome Screen
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: `Welcome to ${APP_NAME}`,
+    version: '1.0.0 (Layer 9: Full-Stack Integrated)',
+    documentation: {
+      health: 'GET /api/health',
+      products: 'GET /api/products',
+      quotations: 'GET /api/quotations',
+      submitQuote: 'POST /api/quotations'
+    },
+    frontendClient: CLIENT_ORIGIN
+  });
+});
+
 // API Directory Route
 app.get('/api', (req, res) => {
   res.status(200).json({
