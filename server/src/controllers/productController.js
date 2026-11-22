@@ -1,57 +1,56 @@
 // =============================================================================
 // FILE: server/src/controllers/productController.js
 // PURPOSE: Business logic controller for Product Catalogue operations.
-// EXPRESS CONCEPT: Controllers
-// A controller function receives (req, res, next) and handles the actual business
-// rules, queries data, and returns formatted JSON HTTP responses.
+// MONGOOSE & EXPRESS CONCEPTS:
+//   - Product.find(): Queries MongoDB documents matching criteria.
+//   - Product.findOne(): Retrieves a single document by custom ID or query.
+//   - req.query: Parses URL parameters (?search=...&category=...).
+//   - req.params: Parses route parameters (/:id).
 // =============================================================================
 
-import { products } from '../data/products.js';
+import Product from '../models/Product.js';
 
 // =============================================================================
 // CONTROLLER 1: getProducts(req, res, next)
 // ROUTE: GET /api/products
 // ACCESS: Public (Customers & Admins)
-// EXPRESS CONCEPT: req.query (Query Strings)
-// Reads optional filter parameters from the URL: /api/products?search=glove&category=safety
 // =============================================================================
-export const getProducts = (req, res, next) => {
+export const getProducts = async (req, res, next) => {
   try {
     const { search, category, inStock } = req.query;
+    const query = {};
 
-    let result = [...products];
-
-    // 1. Search Query Filter (checks title, SKU, or description)
+    // 1. Search Filter: Case-insensitive regex across title, SKU, or description
     if (search) {
-      const cleanSearch = search.trim().toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.title.toLowerCase().includes(cleanSearch) ||
-          p.sku.toLowerCase().includes(cleanSearch) ||
-          p.description.toLowerCase().includes(cleanSearch)
-      );
+      const cleanSearch = search.trim();
+      query.$or = [
+        { title: { $regex: cleanSearch, $options: 'i' } },
+        { sku: { $regex: cleanSearch, $options: 'i' } },
+        { description: { $regex: cleanSearch, $options: 'i' } }
+      ];
     }
 
     // 2. Category Filter
     if (category && category !== 'all') {
-      result = result.filter((p) => p.category === category);
+      query.category = category.toLowerCase();
     }
 
     // 3. Stock Status Filter
     if (inStock !== undefined) {
-      const stockBool = inStock === 'true';
-      result = result.filter((p) => p.inStock === stockBool);
+      query.inStock = inStock === 'true';
     }
+
+    // MONGOOSE CONCEPT: Product.find(query)
+    // Executes query against MongoDB Atlas collection 'products'
+    const products = await Product.find(query).sort({ title: 1 });
 
     // HTTP STATUS 200: OK
     res.status(200).json({
       success: true,
-      count: result.length,
-      data: result
+      count: products.length,
+      data: products
     });
   } catch (error) {
-    // EXPRESS CONCEPT: Error Forwarding with next(error)
-    // Passes any unexpected exception down to our centralized error middleware!
     next(error);
   }
 };
@@ -60,13 +59,14 @@ export const getProducts = (req, res, next) => {
 // CONTROLLER 2: getProductById(req, res, next)
 // ROUTE: GET /api/products/:id
 // ACCESS: Public
-// EXPRESS CONCEPT: req.params (Route Parameters)
-// Express extracts dynamic URL segments into req.params (e.g. :id -> req.params.id).
 // =============================================================================
-export const getProductById = (req, res, next) => {
+export const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const product = products.find((p) => p.id === id);
+
+    // MONGOOSE CONCEPT: Product.findOne()
+    // Searches by custom business ID (e.g. 'prod-001')
+    const product = await Product.findOne({ id });
 
     if (!product) {
       // HTTP STATUS 404: Not Found

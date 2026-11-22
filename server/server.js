@@ -8,7 +8,16 @@
 import express from 'express';
 import cors from 'cors';
 import os from 'node:os';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// Load server/.env reliably
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+// Import Database Connection
+import connectDB from './src/config/db.js';
 
 // Import Modular Route Handlers
 import productRoutes from './src/routes/productRoutes.js';
@@ -107,25 +116,33 @@ app.use(notFound);
 app.use(errorHandler);
 
 // =============================================================================
-// SERVER LISTENER
+// SERVER LISTENER & DATABASE BOOTSTRAP
 // =============================================================================
-const server = app.listen(PORT, () => {
-  console.log('================================================================');
-  console.log(`🚀 ${APP_NAME} IS RUNNING (Express 4)`);
-  console.log(`🌐 Local URL:         http://localhost:${PORT}`);
-  console.log(`🏥 Health Check API:  http://localhost:${PORT}/api/health`);
-  console.log(`📦 Products API:      http://localhost:${PORT}/api/products`);
-  console.log(`📋 Quotations API:    http://localhost:${PORT}/api/quotations`);
-  console.log(`⚙️  Environment Mode: ${NODE_ENV}`);
-  console.log(`🔒 Allowed Client:   ${CLIENT_ORIGIN}`);
-  console.log('================================================================');
-});
+const startServer = async () => {
+  // 1. Connect to MongoDB Atlas
+  await connectDB();
 
-// Graceful Shutdown
-process.on('SIGINT', () => {
-  console.log('\n🛑 SIGINT received: Closing Express server gracefully...');
-  server.close(() => {
-    console.log('✅ Express server closed. Process terminated cleanly.');
-    process.exit(0);
+  // 2. Start HTTP listener
+  const server = app.listen(PORT, () => {
+    console.log('================================================================');
+    console.log(`🚀 ${APP_NAME} IS RUNNING (Express 4 + MongoDB)`);
+    console.log(`🌐 Local URL:         http://localhost:${PORT}`);
+    console.log(`🏥 Health Check API:  http://localhost:${PORT}/api/health`);
+    console.log(`📦 Products API:      http://localhost:${PORT}/api/products`);
+    console.log(`📋 Quotations API:    http://localhost:${PORT}/api/quotations`);
+    console.log(`⚙️  Environment Mode: ${NODE_ENV}`);
+    console.log(`🔒 Allowed Client:   ${CLIENT_ORIGIN}`);
+    console.log('================================================================');
   });
-});
+
+  // Graceful Shutdown
+  process.on('SIGINT', () => {
+    console.log('\n🛑 SIGINT received: Closing Express server gracefully...');
+    server.close(() => {
+      console.log('✅ Express server closed. Process terminated cleanly.');
+      process.exit(0);
+    });
+  });
+};
+
+startServer();

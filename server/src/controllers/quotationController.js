@@ -1,29 +1,25 @@
 // =============================================================================
 // FILE: server/src/controllers/quotationController.js
 // PURPOSE: Business logic controller for B2B Quotation Management.
-// CORE BUSINESS REQUIREMENT:
-//   - Customers submit enquiries (even for out-of-stock items).
-//   - Backend registers quotation, calculates product-wise prices & arrival ETAs.
-//   - Admin can view all enquiries and update quotation statuses!
+// MONGOOSE & BUSINESS LOGIC:
+//   - Quotation.create(): Saves new quotation document to MongoDB Atlas.
+//   - Quotation.find(): Queries all stored quotations with sorting.
+//   - Quotation.findOneAndUpdate(): Updates quotation workflow status.
 // =============================================================================
 
-// IN-MEMORY QUOTATION DATABASE
-// In Layer 8, this will become the Quotation Mongoose model in MongoDB!
-let quotationsStore = [];
+import Quotation from '../models/Quotation.js';
+import Product from '../models/Product.js';
 
 // =============================================================================
 // CONTROLLER 1: createQuotation(req, res, next)
 // ROUTE: POST /api/quotations
 // ACCESS: Public (Customer)
-// EXPRESS CONCEPT: req.body (Parsed JSON Payload)
-// Express automatically parses the incoming JSON request into req.body!
 // =============================================================================
-export const createQuotation = (req, res, next) => {
+export const createQuotation = async (req, res, next) => {
   try {
     const { customer, items, specialInstructions } = req.body;
 
     // SECURITY CONCEPT: Server-Side Input Validation
-    // Never trust client data! Validate structure before processing.
     if (!customer || !customer.companyName || !customer.email) {
       return res.status(400).json({
         success: false,
@@ -46,16 +42,16 @@ export const createQuotation = (req, res, next) => {
       const isReadyInStock = item.inStock ?? true;
       const arrivalDate = new Date(now);
 
-      // In-stock items arrive in 3 days; procurement items take 18 days
+      // In-stock items arrive in 3 days; out-of-stock items require 18 days for factory procurement
       arrivalDate.setDate(now.getDate() + (isReadyInStock ? 3 : 18));
 
-      const cataloguePrice = Number(item.cataloguePriceEstimate || 0);
-      // Backend automatically applies a 5% commercial bulk discount
+      const cataloguePrice = Number(item.cataloguePriceEstimate || item.price || 0);
+      // Commercial discount: 5% off list price for quotation enquiries
       const quotedUnitPrice = Number((cataloguePrice * 0.95).toFixed(2));
       const lineItemTotal = Number((quotedUnitPrice * (item.quantity || 1)).toFixed(2));
 
       return {
-        productId: item.productId,
+        productId: item.productId || item.id,
         title: item.title,
         sku: item.sku,
         quantity: item.quantity || 1,
@@ -73,16 +69,16 @@ export const createQuotation = (req, res, next) => {
       };
     });
 
-    // Calculate total estimated quotation value using Array.reduce()
-    const totalQuotationValue = processedItems.reduce(
-      (sum, item) => sum + item.lineItemTotal,
-      0
+    // Calculate total quotation value using Array.reduce()
+    const totalQuotationValue = Number(
+      processedItems.reduce((sum, item) => sum + item.lineItemTotal, 0).toFixed(2)
     );
 
-    const newQuotation = {
-      id: quotationId,
-      quotationId: quotationId,
-      status: "PENDING_APPROVAL", // Initial status
+    // MONGOOSE CONCEPT: Quotation.create()
+    // Permanently persists the quotation document into MongoDB Atlas!
+    const newQuotation = await Quotation.create({
+      quotationId,
+      status: "PENDING_APPROVAL",
       customer: {
         companyName: customer.companyName,
         email: customer.email,
@@ -90,21 +86,16 @@ export const createQuotation = (req, res, next) => {
         desiredDeliveryDate: customer.desiredDeliveryDate || "Flexible"
       },
       items: processedItems,
-      totalQuotationValue: Number(totalQuotationValue.toFixed(2)),
-      specialInstructions: specialInstructions || "",
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString()
-    };
+      totalQuotationValue,
+      specialInstructions: specialInstructions || ""
+    });
 
-    // Save to our in-memory store
-    quotationsStore.unshift(newQuotation);
-
-    console.log(`✅ [Quotation Created] ID: ${quotationId} for ${customer.companyName}`);
+    console.log(`✅ [MongoDB Saved] Quotation ID: ${quotationId} for ${customer.companyName} ($${totalQuotationValue})`);
 
     // HTTP STATUS 201: Created
     res.status(201).json({
       success: true,
-      message: `Quotation ${quotationId} registered successfully. Our commercial sales desk will confirm final freight terms.`,
+      message: `Quotation ${quotationId} registered and saved to MongoDB. Our commercial sales desk will confirm final freight terms.`,
       data: newQuotation
     });
   } catch (error) {
@@ -115,22 +106,21 @@ export const createQuotation = (req, res, next) => {
 // =============================================================================
 // CONTROLLER 2: getAllQuotations(req, res, next)
 // ROUTE: GET /api/quotations
-// ACCESS: Admin Only (Management Dashboard)
+// ACCESS: Admin
 // =============================================================================
-export const getAllQuotations = (req, res, next) => {
+export const getAllQuotations = async (req, res, next) => {
   try {
     const { status } = req.query;
+    const filter = status ? { status: status.toUpperCase() } : {};
 
-    let result = [...quotationsStore];
-
-    if (status) {
-      result = result.filter((q) => q.status === status.toUpperCase());
-    }
+    // MONGOOSE CONCEPT: .find().sort({ createdAt: -1 })
+    // Returns newest quotations first!
+    const quotations = await Quotation.find(filter).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
-      count: result.length,
-      data: result
+      count: quotations.length,
+      data: quotations
     });
   } catch (error) {
     next(error);
@@ -140,13 +130,14 @@ export const getAllQuotations = (req, res, next) => {
 // =============================================================================
 // CONTROLLER 3: getQuotationById(req, res, next)
 // ROUTE: GET /api/quotations/:id
+// ACCESS: Public / Customer & Admin
 // =============================================================================
-export const getQuotationById = (req, res, next) => {
+export const getQuotationById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const quotation = quotationsStore.find(
-      (q) => q.quotationId === id || q.id === id
-    );
+
+    // MONGOOSE CONCEPT: Quotation.findOne()
+    const quotation = await Quotation.findOne({ quotationId: id });
 
     if (!quotation) {
       return res.status(404).json({
@@ -167,51 +158,42 @@ export const getQuotationById = (req, res, next) => {
 // =============================================================================
 // CONTROLLER 4: updateQuotationStatus(req, res, next)
 // ROUTE: PATCH /api/quotations/:id/status
-// ACCESS: Admin Only
-// PURPOSE: Admin updates quotation status (e.g. APPROVED, IN_PROCUREMENT, REJECTED)
+// ACCESS: Admin
 // =============================================================================
-export const updateQuotationStatus = (req, res, next) => {
+export const updateQuotationStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status, adminNotes } = req.body;
+    const { status } = req.body;
 
-    const validStatuses = [
-      "PENDING_APPROVAL",
-      "APPROVED",
-      "IN_PROCUREMENT",
-      "DISPATCHED",
-      "REJECTED"
-    ];
-
-    if (!status || !validStatuses.includes(status)) {
+    const validStatuses = ['PENDING_APPROVAL', 'REVIEWED', 'APPROVED', 'REJECTED'];
+    if (!status || !validStatuses.includes(status.toUpperCase())) {
       return res.status(400).json({
         success: false,
-        message: `Validation Error: Status must be one of: ${validStatuses.join(", ")}`
+        message: `Invalid status "${status}". Allowed values: ${validStatuses.join(', ')}`
       });
     }
 
-    const quotation = quotationsStore.find(
-      (q) => q.quotationId === id || q.id === id
+    // MONGOOSE CONCEPT: Quotation.findOneAndUpdate()
+    // { new: true } returns the updated document rather than the original
+    const updatedQuotation = await Quotation.findOneAndUpdate(
+      { quotationId: id },
+      { status: status.toUpperCase() },
+      { new: true, runValidators: true }
     );
 
-    if (!quotation) {
+    if (!updatedQuotation) {
       return res.status(404).json({
         success: false,
-        message: `Quotation with ID "${id}" was not found.`
+        message: `Quotation "${id}" was not found.`
       });
     }
 
-    // Update status and timestamp
-    quotation.status = status;
-    quotation.adminNotes = adminNotes || quotation.adminNotes;
-    quotation.updatedAt = new Date().toISOString();
-
-    console.log(`🔄 [Quotation Status Updated] ${id} -> ${status}`);
+    console.log(`🔄 [Quotation Status Updated] ${id} -> ${updatedQuotation.status}`);
 
     res.status(200).json({
       success: true,
-      message: `Quotation status updated to ${status}.`,
-      data: quotation
+      message: `Quotation status updated to ${updatedQuotation.status}`,
+      data: updatedQuotation
     });
   } catch (error) {
     next(error);

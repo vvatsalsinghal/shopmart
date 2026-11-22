@@ -7,7 +7,7 @@
 
 ---
 
-## Current Active Layer: Layer 5 (Advanced React: Context API & Custom Hooks)
+## Current Active Layer: Layer 9 (Full-Stack Integration: Connecting React to Express & MongoDB)
 
 | Layer | Topic / Skill | Status | Date Started | Date Mastered |
 | :--- | :--- | :--- | :--- | :--- |
@@ -32,18 +32,18 @@
 | **Layer 4** | `useEffect` & Component Lifecycle | 🔵 Practiced | 2026-11-18 | - |
 | **Layer 4** | Controlled Forms & Event Handling | 🔵 Practiced | 2026-11-18 | - |
 | **Layer 4** | React Router Single-Page Navigation | ⚪ Pending | - | - |
-| **Layer 5** | React Context API (Auth & Quote Cart) | 🟡 Introduced | 2026-11-19 | - |
-| **Layer 5** | Custom Hooks Creation (`useQuoteCart`) | 🟡 Introduced | 2026-11-19 | - |
+| **Layer 5** | React Context API (Auth & Quote Cart) | 🔵 Practiced | 2026-11-19 | - |
+| **Layer 5** | Custom Hooks Creation (`useQuoteCart`) | 🔵 Practiced | 2026-11-19 | - |
 | **Layer 5** | Reusable UI Component Systems | 🔵 Practiced | 2026-11-19 | - |
-| **Layer 6** | Node.js Architecture (libuv, V8) | 🟡 Introduced | 2026-11-19 | - |
+| **Layer 6** | Node.js Architecture (libuv, V8) | 🔵 Practiced | 2026-11-19 | - |
 | **Layer 6** | Environment Variables with `dotenv` | 🔵 Practiced | 2026-11-19 | - |
-| **Layer 7** | Express.js Server & Application Architecture | 🟡 Introduced | 2026-11-19 | - |
-| **Layer 7** | RESTful Routing & HTTP Status Codes | 🟡 Introduced | 2026-11-19 | - |
-| **Layer 7** | Middleware Pipeline & Error Handling | 🟡 Introduced | 2026-11-19 | - |
-| **Layer 8** | MongoDB Atlas & NoSQL Document Principles | ⚪ Pending | - | - |
-| **Layer 8** | Mongoose Schema Design & Validations | ⚪ Pending | - | - |
-| **Layer 8** | Document Relationships & `.populate()` | ⚪ Pending | - | - |
-| **Layer 9** | Full-Stack Integration & CORS Configuration | ⚪ Pending | - | - |
+| **Layer 7** | Express.js Server & Application Architecture | 🔵 Practiced | 2026-11-19 | - |
+| **Layer 7** | RESTful Routing & HTTP Status Codes | 🔵 Practiced | 2026-11-19 | - |
+| **Layer 7** | Middleware Pipeline & Error Handling | 🔵 Practiced | 2026-11-19 | - |
+| **Layer 8** | MongoDB Atlas & NoSQL Document Principles | 🔵 Practiced | 2026-11-22 | - |
+| **Layer 8** | Mongoose Schema Design & Validations | 🔵 Practiced | 2026-11-22 | - |
+| **Layer 8** | Document Seeding, CRUD & Queries | 🔵 Practiced | 2026-11-22 | - |
+| **Layer 9** | Full-Stack Integration & CORS Configuration | 🟡 Introduced | 2026-11-22 | - |
 | **Layer 9** | API Service Layer & Async UI States | ⚪ Pending | - | - |
 | **Layer 10** | Password Hashing with `bcrypt` | ⚪ Pending | - | - |
 | **Layer 10** | JWT Authentication & Authorization Flow | ⚪ Pending | - | - |

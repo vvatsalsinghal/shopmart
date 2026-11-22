@@ -157,4 +157,25 @@ This reference catalogs every key function, hook, method, and library used throu
 
 ---
 
+## Mongoose ODM & MongoDB Database Operations
+
+### Connection & Schema Methods
+| Method / Function | Signature | Purpose & Project Usage |
+| :--- | :--- | :--- |
+| `mongoose.connect()` | `await mongoose.connect(uri)` | Opens a persistent connection pool to MongoDB Atlas in `db.js` |
+| `new mongoose.Schema()` | `new mongoose.Schema({ ... }, { timestamps: true })` | Defines the document structure, validation rules, types, and auto-timestamps |
+| `mongoose.model()` | `mongoose.model('Product', productSchema)` | Compiles the schema into a queryable Model bound to the `products` collection |
+
+### Mongoose CRUD Queries
+| Method | Example in Codebase | Purpose & Return Value |
+| :--- | :--- | :--- |
+| `Model.find()` | `await Product.find(query).sort({ title: 1 })` | Queries multiple documents matching filter criteria; returns array of documents |
+| `Model.findOne()` | `await Product.findOne({ id: req.params.id })` | Finds the first matching document; returns single document or `null` |
+| `Model.create()` | `await Quotation.create(payload)` | Validates and inserts a new document permanently into the collection |
+| `Model.findOneAndUpdate()` | `await Quotation.findOneAndUpdate({ quotationId }, { status }, { new: true })` | Atomically updates a document; `{ new: true }` returns the updated document |
+| `Model.insertMany()` | `await Product.insertMany(products)` | Efficiently bulk-inserts an array of seed documents in `seeder.js` |
+| `Model.deleteMany()` | `await Product.deleteMany({})` | Clears all documents in a collection (used before re-seeding) |
+
+---
+
 *(As we build through each layer, we will continually expand this dictionary with JavaScript array methods, React hooks, Express router methods, and Mongoose database operations!)*
